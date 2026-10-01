@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- YouTube's embedded player needs to know which site is embedding it -->
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <meta
+        name="description"
+        content="AIMuse — an emotion-aware music experience that turns your feelings into music."
+    >
+
+    <title>AIMuse — Your Emotions, Your Music</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+
+    <!-- Google Font -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Lets the browser theme its own UI (scrollbars, form controls) too -->
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#f4eefb">
+
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Interaction effects: cursor ring, glow, float-ins, timeline -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='effects.css') }}">
+</head>
+
+<body>
+
+    <!--
+        Applies the saved (or system) theme BEFORE the page paints,
+        so dark mode never flashes light first. script.js takes over
+        from here.
+    -->
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem("aimuseDarkMode");
+                var dark = saved === null
+                    ? window.matchMedia("(prefers-color-scheme: dark)").matches
+                    : saved === "true";
+                if (dark) document.body.classList.add("dark-theme");
+                if (localStorage.getItem("aimuseReduceEffects") === "true") {
+                    document.body.classList.add("reduce-effects");
+                }
+            } catch (e) { /* storage blocked: stay light */ }
+        })();
+    </script>
+
+
+    <!-- =====================================================
+         SCROLL PROGRESS
+         ===================================================== -->
+
+    <div id="scroll-progress" class="scroll-progress" aria-hidden="true">
+        <div id="scroll-progress-bar" class="scroll-progress-bar"></div>
+    </div>
+
+
+    <!-- =====================================================
+         AMBIENT BACKGROUND
+         ===================================================== -->
+
+    <div class="ambient-background">
+
+        <div class="aurora aurora-one" data-depth="6"></div>
+        <div class="aurora aurora-two" data-depth="10"></div>
+        <div class="aurora aurora-three" data-depth="8"></div>
+
+        <div class="silk-layer silk-one"></div>
+        <div class="silk-layer silk-two"></div>
+
+        <!--
+            Fairy dust: ONE canvas of a few dozen glowing motes that wander
+            through the empty space and fade out before they reach any text
+            or box (see "FAIRY DUST" in script.js).
+        -->
+        <canvas id="dust-canvas" class="dust-canvas" aria-hidden="true"></canvas>
+
+        <!-- Slow-drifting depth orbs, layered behind everything -->
+        <span class="depth-orb depth-orb-a" data-depth="4"></span>
+        <span class="depth-orb depth-orb-b" data-depth="9"></span>
+        <span class="depth-orb depth-orb-c" data-depth="14"></span>
+
+    </div>
+
+
+    <!-- =====================================================
+         ENTRY EXPERIENCE
+         ===================================================== -->
+
+    <section id="entry-screen" class="entry-screen">
+
+        <!-- Entry-only floating dust, for extra depth on first impression -->
+        <div class="entry-parallax" aria-hidden="true">
+            <span class="entry-orb orb-a" data-depth="20"></span>
+            <span class="entry-orb orb-b" data-depth="34"></span>
+            <span class="entry-orb orb-c" data-depth="15"></span>
+            <span class="entry-sparkle sparkle-a" data-depth="26">✦</span>
+            <span class="entry-sparkle sparkle-b" data-depth="18">✧</span>
+            <span class="entry-sparkle sparkle-c" data-depth="30">✦</span>
+            <span class="entry-sparkle sparkle-d" data-depth="12">✧</span>
+        </div>
+
+        <div class="entry-content">
+
+            <p class="entry-eyebrow reveal-item" style="--reveal-delay: 0.05s;">
+                AN EMOTIONAL MUSIC EXPERIENCE
+            </p>
+
+            <h1 class="entry-title reveal-item" style="--reveal-delay: 0.22s;">
+                Welcome to
+                <span data-depth="7">AIMuse</span>
+            </h1>
+
+            <p class="entry-description reveal-item" style="--reveal-delay: 0.4s;">
+                A world where your feelings become music.
+            </p>
+
+
+            <!-- Magical Portal -->
+
+            <div class="portal-wrapper reveal-item" style="--reveal-delay: 0.56s;">
+
+                <div class="portal-glow"></div>
+
+                <button
+                    id="enter-button"
+                    class="portal-button"
+                    type="button"
+                    aria-label="Enter AIMuse"
+                >
+
+                    <span class="portal-ring ring-one"></span>
+                    <span class="portal-ring ring-two"></span>
+                    <span class="portal-ring ring-three"></span>
+
+                    <span class="portal-core">
+                        <span class="portal-symbol">♪</span>
+                        <span class="portal-text">ENTER</span>
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <p class="entry-hint reveal-item" style="--reveal-delay: 0.78s;">
+                Step into your world of music
+            </p>
+
+        </div>
+
+
+        <!-- Entry music -->
+
+        <!--
+            A <video> element on purpose, playing an MP3.
+
+            Browsers only let a page start MUTED playback on its own
+            for <video> elements — a muted <audio> element is refused
+            just like an audible one. Using <video> lets the music
+            start the instant the page opens (silently); the first
+            click, tap or key press then brings the sound in.
+            It has no picture and is kept off-screen.
+        -->
+        <video
+            id="entry-music"
+            class="entry-music"
+            preload="auto"
+            playsinline
+            muted
+            aria-hidden="true"
+            tabindex="-1"
+        ></video>
+
+
+        <!-- Music indicator + now-playing display -->
+
+        <div
+            id="music-indicator"
+            class="music-indicator reveal-item"
+            style="--reveal-delay: 0.95s;"
+        >
+
+            <span class="music-bars">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+
+            <span class="music-indicator-text">
+
+                <span id="music-status">
+                    AIMuse is waiting for you
+                </span>
+
+                <span id="now-playing-track" class="now-playing-track"></span>
+
+            </span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         MAIN AIMUSE EXPERIENCE
+         ===================================================== -->
+
+    <main id="main-experience" class="main-experience">
+
+
+        <!-- =================================================
+             NAVIGATION
+             ================================================= -->
+
+        <header class="navbar">
+
+            <a href="#" class="brand" aria-label="AIMuse Home">
+
+                <span class="brand-mark">♪</span>
+
+                <span class="brand-name">
+                    AIMuse
+                </span>
+
+            </a>
+
+
+            <nav class="nav-links">
+
+                <a href="#discover">Discover</a>
+                <a href="#no-idea-section">Explore moods</a>
+                <a href="#how-it-works">How it works</a>
+
+            </nav>
+
+
+            <!-- (theme / effects buttons now live in the floating settings dock) -->
+            <div class="nav-actions" aria-hidden="true"></div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             HERO / MOOD INPUT
+             ================================================= -->
+
+        <section id="discover" class="hero-section">
+
+            <div class="hero-orbit orbit-one" data-depth="3"></div>
+            <div class="hero-orbit orbit-two" data-depth="5"></div>
+
+
+            <div class="hero-content">
+
+                <p class="section-eyebrow">
+                    YOUR MUSIC. YOUR MOMENT.
+                </p>
+
+                <h2 class="hero-title">
+                    Tell me how
+                    <span data-depth="9">you feel.</span>
+                </h2>
+
+                <p class="hero-description">
+                    Put your feelings into words.
+                    AIMuse will turn them into a musical experience.
+                </p>
+
+
+                <!-- Mood Input Card -->
+
+                <div class="mood-card">
+
+                    <div class="mood-card-header">
+
+                        <div>
+                            <span class="input-label">
+                                What's on your mind?
+                            </span>
+
+                            <span class="input-subtitle">
+                                There are no right or wrong words.
+                            </span>
+                        </div>
+
+                        <span class="emotion-orb"></span>
+
+                    </div>
+
+
+                    <div class="textarea-wrapper">
+
+                        <textarea
+                            id="mood-input"
+                            name="mood"
+                            rows="5"
+                            maxlength="1000"
+                            placeholder="I'm feeling..."
+                            aria-label="Describe how you are feeling"
+                        ></textarea>
+
+                        <div id="mood-error" class="mood-error" aria-live="polite">
+                            <span id="mood-error-title" class="mood-error-title">Haha, what did you just type?</span>
+                            <span id="mood-error-message" class="mood-error-message">
+                                     Try telling me how you're actually feeling — even a few words are enough.
+                            </span>
+                        </div>
+
+                        <div class="character-count">
+                            <span id="character-count">0</span>/1000
+                        </div>
+
+                    </div>
+
+
+                    <!-- Which language should the songs be in? -->
+                    <div class="language-picker">
+
+                        <span id="language-label" class="language-picker-label">
+                            Songs in
+                        </span>
+
+                        <div
+                            id="language-options"
+                            class="language-options"
+                            role="radiogroup"
+                            aria-labelledby="language-label"
+                        >
+                            <button type="button" class="language-chip" role="radio" aria-checked="false" data-language="telugu">Telugu</button>
+                            <button type="button" class="language-chip" role="radio" aria-checked="false" data-language="hindi">Hindi</button>
+                            <button type="button" class="language-chip" role="radio" aria-checked="false" data-language="english">English</button>
+                            <button type="button" class="language-chip active" role="radio" aria-checked="true" data-language="mix">Mix</button>
+                        </div>
+
+                        <span id="language-hint" class="language-hint" aria-live="polite"></span>
+
+                    </div>
+
+
+                    <div class="mood-card-footer">
+
+                        <span class="privacy-note">
+                            Your feelings stay within this experience.
+                        </span>
+
+                        <button
+                            id="analyze-button"
+                            class="primary-button"
+                            type="button"
+                        >
+
+                            <span class="button-text">
+                                Discover my music
+                            </span>
+
+                            <span class="button-arrow">
+                                →
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Decorative floating elements -->
+
+            <div class="floating-note note-one" data-depth="5">♪</div>
+            <div class="floating-note note-two" data-depth="8">♫</div>
+            <div class="floating-note note-three" data-depth="6">♩</div>
+            <span class="floating-note note-four" data-depth="10">♬</span>
+
+        </section>
+
+
+
+        <!-- =================================================
+             EMOTION RESULT
+             ================================================= -->
+
+        <section
+            id="emotion-section"
+            class="emotion-section hidden"
+        >
+
+            <div class="emotion-card">
+
+                <p class="section-eyebrow">
+                    WE HEARD YOU
+                </p>
+
+                <h3>
+                    Your current mood feels
+                    <span id="detected-emotion">...</span>
+                </h3>
+
+                <div class="emotion-confidence">
+
+                    <span>Emotion confidence</span>
+
+                    <div class="confidence-bar">
+                        <div
+                            id="confidence-fill"
+                            class="confidence-fill"
+                        ></div>
+                    </div>
+
+                    <span id="confidence-value">
+                        0%
+                    </span>
+
+                </div>
+
+                <!-- What AIMuse understood: mood, energy, situation, language... -->
+
+                <div
+                    id="understanding"
+                    class="understanding hidden"
+                    aria-live="polite"
+                >
+                    <p id="understanding-headline" class="understanding-headline"></p>
+                    <div id="understanding-chips" class="understanding-chips"></div>
+                </div>
+
+                <!-- Shown only when the words sound like real distress -->
+                <div id="care-card" class="care-card hidden" role="note" aria-live="polite">
+                    <p class="care-title">That sounds really heavy. You don't have to carry it alone.</p>
+                    <p class="care-text">
+                        Talking to someone can help, even a little. In India,
+                        Tele-MANAS is free, confidential and open 24/7:
+                        call <a href="tel:14416">14416</a> or
+                        <a href="tel:18008914416">1-800-891-4416</a>.
+                        If you're in immediate danger, call <a href="tel:112">112</a>.
+                    </p>
+                    <p class="care-text care-soft">
+                        AIMuse will keep the music gentle for you.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Appears after a result: tells the person the playlists are below -->
+            <button
+                id="scroll-cue"
+                class="scroll-cue"
+                type="button"
+                aria-label="Scroll down to your playlists"
+            >
+                <span class="scroll-cue-label">Your playlists are waiting</span>
+                <span class="scroll-cue-arrow" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
+                         stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 9l6 6 6-6"></path>
+                    </svg>
+                </span>
+            </button>
+
+        </section>
+
+
+
+        <!-- =================================================
+             PLAYLIST MODE
+             ================================================= -->
+
+        <section
+            id="playlist-section"
+            class="playlist-section hidden"
+        >
+
+            <div class="section-heading">
+
+                <p class="section-eyebrow">
+                    CHOOSE YOUR EXPERIENCE
+                </p>
+
+                <h2 id="playlist-heading">
+                    What does your music
+                    <span>need to do?</span>
+                </h2>
+
+                <p id="playlist-context-note" class="playlist-context-note"></p>
+
+            </div>
+
+
+            <div id="playlist-options" class="playlist-options">
+
+
+                <!-- Mood Match -->
+
+                <button
+                    id="match-option"
+                    class="playlist-option tilt-card"
+                    data-mode="match"
+                    type="button"
+                >
+
+                    <div class="option-icon">
+                        ♫
+                    </div>
+
+                    <div class="option-content">
+
+                        <span class="option-tag">
+                            STAY WITH IT
+                        </span>
+
+                        <h3>
+                            Mood-Based Playlist
+                        </h3>
+
+                        <p>
+                            Music that reflects the feeling
+                            you're experiencing right now.
+                        </p>
+
+                    </div>
+
+                    <span class="option-arrow">
+                        →
+                    </span>
+
+                </button>
+
+
+                <!-- Mood Uplift (only shown for negative emotions) -->
+
+                <button
+                    id="uplift-option"
+                    class="playlist-option recommended tilt-card"
+                    data-mode="uplift"
+                    type="button"
+                >
+
+                    <div class="recommended-badge">
+                        RECOMMENDED
+                    </div>
+
+                    <div class="option-icon">
+                        ✦
+                    </div>
+
+                    <div class="option-content">
+
+                        <span class="option-tag">
+                            CHANGE THE MOMENT
+                        </span>
+
+                        <h3>
+                            Mood-Uplifting Playlist
+                        </h3>
+
+                        <p>
+                            A carefully chosen musical journey
+                            designed to gently lift your mood.
+                        </p>
+
+                    </div>
+
+                    <span class="option-arrow">
+                        →
+                    </span>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MUSIC EXPERIENCE
+             ================================================= -->
+
+        <section
+            id="music-section"
+            class="music-section hidden"
+        >
+
+            <div class="music-heading">
+
+                <div>
+
+                    <p class="section-eyebrow">
+                        MADE FOR THIS MOMENT
+                    </p>
+
+                    <h2>
+                        Your AIMuse
+                        <span data-depth="9">playlist.</span>
+                    </h2>
+
+                </div>
+
+                <div class="playlist-mood">
+                    <span class="mood-dot"></span>
+                    <span id="playlist-mood-text">Your mood</span>
+                </div>
+
+            </div>
+
+
+            <!--
+                TWO BOXES, side by side:
+
+                  1. the PLAYER   (plays whatever is picked)
+                  2. ONE LIST, depending on how the music was chosen:
+                       - AIMUSE PLAYLIST  after a mood was analysed
+                                          (verified songs from YouTube)
+                       - SAMPLE SONGS     after a sample song was picked
+                                          in "Still deciding?" below
+                     script.js swaps them with setStageView().
+            -->
+
+            <div class="music-stage">
+
+                <!-- ============ 1. PLAYER ============ -->
+
+                <div class="stage-player">
+
+                    <div id="player-placeholder" class="player-placeholder">
+
+                        <!-- Vinyl record: spins while a sample song plays -->
+                        <div class="player-vinyl">
+                            <div class="player-vinyl-disc"></div>
+                            <div class="player-symbol">
+                                ♪
+                            </div>
+                        </div>
+
+                        <p id="player-placeholder-title">
+                            Your music will appear here.
+                        </p>
+
+                        <span id="player-placeholder-subtitle">
+                            Pick a song from either list to play it.
+                        </span>
+
+                        <!-- Live equalizer, driven by the song's real audio -->
+                        <canvas
+                            id="sample-visualizer"
+                            class="sample-visualizer"
+                            aria-hidden="true"
+                        ></canvas>
+
+                    </div>
+
+                    <div id="youtube-player-wrap" class="youtube-player-wrap hidden">
+
+                        <!--
+                            A plain container, not an <iframe> — the
+                            YouTube IFrame Player API replaces this
+                            div with its own iframe at runtime, which
+                            is what lets script.js listen for
+                            playback errors (e.g. an unavailable
+                            video), report them, and skip ahead.
+                        -->
+
+                        <div id="youtube-player"></div>
+
+                    </div>
+
+                    <!-- Local sample-song audio (static/moods/...) -->
+                    <audio id="sample-audio" preload="none"></audio>
+
+                </div>
+
+
+                <!-- ============ 2. AIMUSE PLAYLIST (YouTube) ============ -->
+
+                <aside class="playlist-panel ai-panel" aria-labelledby="ai-panel-title">
+
+                    <div class="playlist-panel-header">
+
+                        <span id="ai-panel-title">
+                            AIMUSE PLAYLIST · YOUTUBE
+                        </span>
+
+                        <span id="song-count">
+                            0 songs
+                        </span>
+
+                    </div>
+
+                    <div id="song-list" class="song-list" aria-live="polite">
+
+                        <!-- Songs are inserted by JavaScript -->
+
+                    </div>
+
+                    <div class="panel-actions">
+
+                        <a
+                            id="open-on-youtube"
+                            class="panel-link hidden"
+                            href="#"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Open on YouTube ↗
+                        </a>
+
+                    </div>
+
+                    <p id="playlist-panel-note" class="playlist-panel-note">
+                        Finding songs for this mood…
+                    </p>
+
+                </aside>
+
+
+                <!-- ============ 2b. SAMPLE SONGS (static/moods) ============ -->
+
+                <aside class="playlist-panel sample-panel hidden" aria-labelledby="sample-panel-title">
+
+                    <div class="playlist-panel-header">
+
+                        <span id="sample-panel-title">
+                            SAMPLE SONGS
+                        </span>
+
+                        <span id="sample-song-count">
+                            0 songs
+                        </span>
+
+                    </div>
+
+                    <div id="sample-song-list" class="song-list">
+
+                        <!-- Songs are inserted by JavaScript -->
+
+                    </div>
+
+                    <p id="sample-panel-note" class="playlist-panel-note">
+                        Loading sample songs…
+                    </p>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             DON'T KNOW WHAT TO LISTEN TO?
+             ================================================= -->
+
+        <section id="no-idea-section" class="no-idea-section">
+
+            <div class="section-heading">
+
+                <p class="section-eyebrow">
+                    STILL DECIDING?
+                </p>
+
+                <h2>
+                    Don't know what
+                    <span data-depth="9">to listen to?</span>
+                </h2>
+
+                <p class="no-idea-subtitle">
+                    Start with one of AIMuse's own tracks, or
+                    pick a sample song from any mood.
+                </p>
+
+            </div>
+
+
+            <!-- The four original AIMuse tracks -->
+
+            <div class="original-tracks">
+
+                <span class="subsection-label">
+                    AIMUSE ORIGINALS
+                </span>
+
+                <div id="original-tracks-grid" class="original-tracks-grid">
+                    <!-- Populated by JavaScript -->
+                </div>
+
+            </div>
+
+
+            <!--
+                Sample songs, by mood. Picking one opens the player
+                above with that mood's list beside it. Hidden when
+                the server has no sample files (the deployed site).
+            -->
+
+            <div id="mood-playlists" class="mood-playlists">
+
+                <span class="subsection-label">
+                    SAMPLE SONGS, BY MOOD
+                </span>
+
+                <div id="mood-tabs" class="mood-tabs" role="tablist">
+                    <!-- Populated by JavaScript -->
+                </div>
+
+                <div id="mood-playlist-panel" class="mood-playlist-panel">
+                    <!-- Populated by JavaScript -->
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             HOW IT WORKS
+             ================================================= -->
+
+        <section
+            id="how-it-works"
+            class="how-section"
+        >
+
+            <div class="section-heading">
+
+                <p class="section-eyebrow">
+                    HOW AIMUSE HEARS YOU
+                </p>
+
+                <h2>
+                    Your emotions become
+                    <span data-depth="9">sound.</span>
+                </h2>
+
+            </div>
+
+
+            <!--
+                A timeline that draws itself as you scroll
+                (effects.js / effects.css, section E5).
+            -->
+
+            <div id="how-timeline" class="steps-container timeline">
+
+                <div class="timeline-track" aria-hidden="true">
+                    <div class="timeline-fill"></div>
+                </div>
+
+
+                <div class="timeline-step">
+
+                    <span class="timeline-node" aria-hidden="true"></span>
+
+                    <div class="step-card tilt-card">
+
+                        <span class="step-number">01</span>
+
+                        <div class="step-icon">◌</div>
+
+                        <h3>Express</h3>
+
+                        <p>
+                            Tell AIMuse how you feel, in your own words —
+                            English, Hinglish or Telugu-English all work.
+                        </p>
+
+                        <span class="step-tag">you type</span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-step">
+
+                    <span class="timeline-node" aria-hidden="true"></span>
+
+                    <div class="step-card tilt-card">
+
+                        <span class="step-number">02</span>
+
+                        <div class="step-icon">✧</div>
+
+                        <h3>Understand</h3>
+
+                        <p>
+                            AIMuse reads your mood and energy, catches
+                            "not feeling good" as sadness, and notices
+                            when you might need more than music.
+                        </p>
+
+                        <span class="step-tag">mood engine</span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-step">
+
+                    <span class="timeline-node" aria-hidden="true"></span>
+
+                    <div class="step-card tilt-card">
+
+                        <span class="step-number">03</span>
+
+                        <div class="step-icon">♫</div>
+
+                        <h3>Find</h3>
+
+                        <p>
+                            A verified YouTube playlist in your language
+                            that matches your mood — or gently lifts it.
+                        </p>
+
+                        <span class="step-tag">youtube data api</span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-step">
+
+                    <span class="timeline-node" aria-hidden="true"></span>
+
+                    <div class="step-card tilt-card">
+
+                        <span class="step-number">04</span>
+
+                        <div class="step-icon">↻</div>
+
+                        <h3>Heal</h3>
+
+                        <p>
+                            If a song can't play, AIMuse swaps in another
+                            upload by itself — and learns which channels
+                            to avoid next time.
+                        </p>
+
+                        <span class="step-tag">self-healing</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FUTURE MULTIMODAL SECTION
+             ================================================= -->
+
+        <section class="future-section">
+
+            <div class="future-glow"></div>
+            <span class="future-orb" data-depth="7"></span>
+
+            <p class="section-eyebrow">
+                THE WORLD WILL KEEP EVOLVING
+            </p>
+
+            <h2>
+                One day, AIMuse won't just
+                <span data-depth="9">read your words.</span>
+            </h2>
+
+            <p>
+                Your face. Your voice. Your emotions.
+                All becoming one musical experience.
+            </p>
+
+            <div class="future-modes">
+
+                <span>TEXT</span>
+                <span>FACE</span>
+                <span>VOICE</span>
+                <span>FUSION</span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <footer class="footer">
+
+            <div class="footer-brand">
+                <span class="brand-mark">♪</span>
+                AIMuse
+            </div>
+
+            <p>
+                Music that understands the moment.
+            </p>
+
+            <span class="footer-note">
+                An evolving emotional music experience.
+            </span>
+
+        </footer>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         PERSISTENT MINI PLAYER
+         ===================================================== -->
+
+    <div
+        id="mini-player"
+        class="mini-player"
+        aria-hidden="true"
+    >
+
+        <span class="mini-player-bars">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </span>
+
+        <div class="mini-player-info">
+            <span id="mini-player-label" class="mini-player-label">
+                Playing
+            </span>
+            <span id="mini-player-track" class="mini-player-track">
+                —
+            </span>
+        </div>
+
+        <button
+            id="mini-player-toggle"
+            class="mini-player-toggle"
+            type="button"
+            aria-label="Pause music"
+        >
+            ❙❙
+        </button>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         PORTAL TRANSITION VIDEO
+         ===================================================== -->
+
+    <div
+        id="portal-transition"
+        class="portal-transition"
+        aria-hidden="true"
+    >
+
+        <!--
+            No src here on purpose: script.js picks Entry_Animation_1.mp4
+            or Entry_Animation_2.mp4 each time the site is opened.
+        -->
+        <video
+            id="portal-video"
+            class="portal-video"
+            playsinline
+            preload="auto"
+            muted
+        ></video>
+
+        <button
+            id="portal-skip"
+            class="portal-skip"
+            type="button"
+        >
+            Skip
+        </button>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
+
+
+
+    <!--
+        Settings dock: always visible, bottom-right corner (also on the
+        entry screen). It used to sit in the navbar, where the floating
+        mini-player covered it.
+    -->
+    <div id="settings-dock" class="settings-dock hint" role="group" aria-label="Display settings">
+
+        <button
+            id="effects-toggle"
+            class="dock-button"
+            type="button"
+            aria-pressed="false"
+            aria-label="Reduce visual effects"
+            title="Reduce visual effects (smoother on slower computers)"
+        >
+            <span class="dock-icon" aria-hidden="true"></span>
+            <span class="dock-label">Reduce effects</span>
+        </button>
+
+        <button
+            id="theme-toggle"
+            class="dock-button"
+            type="button"
+            aria-pressed="false"
+            aria-label="Switch to dark theme"
+            title="Switch between light and dark theme"
+        >
+            <span class="dock-icon" aria-hidden="true"></span>
+            <span class="dock-label">Dark mode</span>
+        </button>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <!-- Loaded last: only reacts to the page, never changes how it works -->
+    <script src="{{ url_for('static', filename='effects.js') }}"></script>
+
+</body>
+</html>

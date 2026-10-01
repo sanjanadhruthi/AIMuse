@@ -1,0 +1,27 @@
+# --- secrets ---
+.env
+
+# --- Python ---
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# --- copyrighted sample songs: keep them on your laptop only ---
+# (the deployed site hides the "Sample songs" box when this folder is empty)
+static/moods/
+static/Moods/
+
+# --- runtime state written by the server ---
+data/*.tmp
+
+# NOTE: data/playlist_snapshot.json is NOT ignored on purpose.
+# Commit it after running `flask --app app warm-cache` so the
+# deployed site always has playlists to fall back on.
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

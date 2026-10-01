@@ -1,0 +1,4964 @@
+/* =========================================================
+   AIMuse — VISUAL FOUNDATION
+   ========================================================= */
+
+
+/* =========================================================
+   01. ROOT / DESIGN SYSTEM
+   ========================================================= */
+
+:root {
+    /* "Pearl dawn": a bright lilac-white base, with richer (not paler) colour. */
+    --bg-main: #f4eefb;
+    --bg-soft: #ebe8fb;
+    --surface: rgba(255, 255, 255, 0.56);
+    --surface-strong: rgba(255, 255, 255, 0.80);
+
+    --pink: #e598be;
+    --pink-soft: #f3c9dc;
+
+    --blue: #7db3dd;
+    --blue-soft: #c3def0;
+
+    --lavender: #a794e3;
+    --lavender-soft: #d9cff2;
+
+    --mint: #90d1bf;
+    --mint-soft: #cdeee3;
+
+    --text-main: #2a2738;
+    --text-soft: #525068;
+    --text-faint: #746f8d;
+
+    --border: rgba(120, 100, 180, 0.20);
+
+    /* violet-tinted shadows: cards float instead of sitting flat */
+    --shadow-soft:
+        0 24px 70px rgba(140, 108, 208, 0.20);
+
+    --shadow-hover:
+        0 34px 96px rgba(140, 108, 208, 0.30);
+
+    /* fairy dust colours (read by script.js) */
+    --dust-a: 229, 152, 190;
+    --dust-b: 167, 148, 227;
+    --dust-c: 125, 179, 221;
+    --dust-core: 255, 255, 255;
+
+    /* Glass panels: white in light mode, a faint white veil in dark mode. */
+    --glass: 255, 255, 255;
+    --glass-k: 1;
+
+    /* Colour the audio spectrum bars are drawn in (read by script.js). */
+    --viz-rgb: 66, 58, 90;
+
+    --radius-large: 32px;
+    --radius-medium: 22px;
+    --radius-small: 14px;
+
+    --transition:
+        500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* =========================================================
+   02. RESET
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg-main);
+    color: var(--text-main);
+
+    font-family: "DM Sans", sans-serif;
+
+    overflow-x: hidden;
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+button,
+textarea {
+    font: inherit;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+::selection {
+    background: rgba(185, 172, 212, 0.38);
+    color: var(--text-main);
+}
+
+
+/* =========================================================
+   03. AMBIENT BACKGROUND
+   ========================================================= */
+
+.ambient-background {
+    position: fixed;
+    inset: 0;
+
+    z-index: -10;
+
+    overflow: hidden;
+
+    background:
+        /* warm peach light from above */
+        radial-gradient(
+            circle at 52% 0%,
+            rgba(255, 224, 204, 0.38),
+            transparent 32%
+        ),
+        /* rose */
+        radial-gradient(
+            circle at 12% 14%,
+            rgba(255, 186, 218, 0.46),
+            transparent 34%
+        ),
+        /* sky */
+        radial-gradient(
+            circle at 88% 12%,
+            rgba(170, 214, 255, 0.44),
+            transparent 36%
+        ),
+        /* lavender */
+        radial-gradient(
+            circle at 74% 84%,
+            rgba(202, 178, 255, 0.46),
+            transparent 38%
+        ),
+        /* mint */
+        radial-gradient(
+            circle at 16% 86%,
+            rgba(190, 242, 228, 0.36),
+            transparent 34%
+        ),
+        /* a soft white sheen from the top, a faint violet depth at the bottom */
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.34),
+            rgba(120, 96, 190, 0.05)
+        ),
+        var(--bg-main);
+}
+
+
+/* =========================================================
+   04. AURORA LIGHTS
+   ========================================================= */
+
+.aurora {
+    position: absolute;
+
+    width: 45vw;
+    height: 45vw;
+
+    border-radius: 50%;
+
+    filter: blur(80px);
+
+    opacity: 0.35;
+
+    pointer-events: none;
+
+    animation:
+        auroraFloat 16s ease-in-out infinite alternate;
+}
+
+.aurora-one {
+    top: -15%;
+    left: -10%;
+
+    background: rgba(255, 168, 210, 0.46);
+}
+
+.aurora-two {
+    top: 20%;
+    right: -18%;
+
+    background: rgba(140, 198, 255, 0.42);
+
+    animation-delay: -5s;
+}
+
+.aurora-three {
+    bottom: -20%;
+    left: 30%;
+
+    background: rgba(188, 162, 255, 0.42);
+
+    animation-delay: -9s;
+}
+
+@keyframes auroraFloat {
+    from {
+        transform: translate3d(-2%, -2%, 0) scale(1);
+    }
+
+    to {
+        transform: translate3d(4%, 5%, 0) scale(1.12);
+    }
+}
+
+
+/* =========================================================
+   05. SILK-LIKE LAYERS
+   ========================================================= */
+
+.silk-layer {
+    position: absolute;
+
+    width: 75vw;
+    height: 28vw;
+
+    border-radius: 50%;
+
+    opacity: 0.18;
+
+    filter: blur(3px);
+
+    pointer-events: none;
+}
+
+.silk-one {
+    top: 18%;
+    left: -20%;
+
+    transform:
+        rotate(-18deg)
+        skewX(-15deg);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.75),
+            rgba(217, 169, 189, 0.28),
+            transparent
+        );
+
+    animation:
+        silkMoveOne 18s ease-in-out infinite alternate;
+}
+
+.silk-two {
+    bottom: 12%;
+    right: -25%;
+
+    transform:
+        rotate(20deg)
+        skewX(15deg);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.72),
+            rgba(169, 207, 197, 0.25),
+            transparent
+        );
+
+    animation:
+        silkMoveTwo 21s ease-in-out infinite alternate;
+}
+
+@keyframes silkMoveOne {
+    from {
+        transform:
+            translateX(-5%)
+            rotate(-18deg)
+            skewX(-15deg);
+    }
+
+    to {
+        transform:
+            translateX(12%)
+            rotate(-13deg)
+            skewX(-10deg);
+    }
+}
+
+@keyframes silkMoveTwo {
+    from {
+        transform:
+            translateX(8%)
+            rotate(20deg)
+            skewX(15deg);
+    }
+
+    to {
+        transform:
+            translateX(-8%)
+            rotate(15deg)
+            skewX(10deg);
+    }
+}
+
+
+/* =========================================================
+   06B. DEPTH ORBS
+   ========================================================= */
+
+.depth-orb {
+    position: absolute;
+
+    border-radius: 50%;
+
+    filter: blur(1px);
+
+    pointer-events: none;
+
+    opacity: 0.5;
+
+    animation:
+        depthDrift ease-in-out infinite alternate;
+}
+
+.depth-orb-a {
+    top: 12%;
+    left: 8%;
+
+    width: 6px;
+    height: 6px;
+
+    background: rgba(217, 169, 189, 0.7);
+
+    animation-duration: 9s;
+}
+
+.depth-orb-b {
+    top: 62%;
+    left: 78%;
+
+    width: 9px;
+    height: 9px;
+
+    background: rgba(155, 189, 206, 0.65);
+
+    animation-duration: 13s;
+    animation-delay: -3s;
+}
+
+.depth-orb-c {
+    top: 38%;
+    left: 46%;
+
+    width: 5px;
+    height: 5px;
+
+    background: rgba(185, 172, 212, 0.72);
+
+    animation-duration: 11s;
+    animation-delay: -6s;
+}
+
+@keyframes depthDrift {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+
+    to {
+        transform: translate3d(14px, -22px, 0);
+    }
+}
+
+
+/* =========================================================
+   06C. CURSOR GLOW
+   ========================================================= */
+
+/*
+    A soft light that drifts toward the cursor. Created and
+    positioned by JavaScript; disabled entirely on touch
+    devices and under reduced motion.
+*/
+
+.cursor-glow {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 340px;
+    height: 340px;
+
+    margin-left: -170px;
+    margin-top: -170px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(var(--glass), calc(0.16 * var(--glass-k))),
+            rgba(217, 169, 189, 0.08) 45%,
+            transparent 70%
+        );
+
+    pointer-events: none;
+
+    z-index: -5;
+
+    will-change: transform;
+}
+
+
+/* =========================================================
+   06B. SCROLL PROGRESS
+   ========================================================= */
+
+/*
+    A thin glowing bar across the top of the page that fills
+    up as the visitor scrolls through the main experience —
+    sits above everything, including the entry screen (where
+    it stays invisible at 0% width).
+*/
+
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 3px;
+
+    z-index: 300;
+
+    pointer-events: none;
+
+    background: rgba(var(--glass), calc(0.15 * var(--glass-k)));
+}
+
+.scroll-progress-bar {
+    height: 100%;
+    width: 0%;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--pink),
+            var(--lavender),
+            var(--blue)
+        );
+
+    box-shadow:
+        0 0 12px rgba(185, 172, 212, 0.65);
+
+    transition: width 120ms ease-out;
+}
+
+
+/* =========================================================
+   07. ENTRY SCREEN
+   ========================================================= */
+
+.entry-screen {
+    position: fixed;
+    inset: 0;
+
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(255, 255, 255, 0.48),
+            transparent 34%
+        );
+
+    transition:
+        opacity 1.2s ease,
+        visibility 1.2s ease,
+        transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.entry-screen.exit {
+    opacity: 0;
+    visibility: hidden;
+
+    transform: scale(1.06);
+    pointer-events: none;
+}
+
+.entry-content {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+
+    padding: 40px 24px;
+}
+
+
+/* =========================================================
+   08. TYPOGRAPHY
+   ========================================================= */
+
+.entry-eyebrow,
+.section-eyebrow {
+    font-size: 0.69rem;
+    font-weight: 600;
+
+    letter-spacing: 0.28em;
+
+    color: var(--text-faint);
+}
+
+.entry-title {
+    margin-top: 18px;
+
+    max-width: 850px;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 400;
+
+    line-height: 0.98;
+
+    letter-spacing: -0.04em;
+}
+
+.entry-title span,
+.hero-title span,
+.section-heading h2 span,
+.music-heading h2 span,
+.future-section h2 span {
+    display: inline-block;
+
+    font-style: italic;
+
+    background:
+        linear-gradient(
+            110deg,
+            var(--pink),
+            var(--lavender),
+            var(--blue)
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+}
+
+.entry-description {
+    max-width: 460px;
+
+    margin-top: 24px;
+
+    color: var(--text-soft);
+
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   09. PORTAL
+   ========================================================= */
+
+.portal-wrapper {
+    position: relative;
+    top: -28px;
+
+    width: 220px;
+    height: 220px;
+
+    margin-top: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.portal-glow {
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.82),
+            rgba(213, 193, 222, 0.28),
+            transparent 70%
+        );
+
+    filter: blur(15px);
+
+    animation:
+        portalBreath 4s ease-in-out infinite;
+}
+
+@keyframes portalBreath {
+    0%,
+    100% {
+        transform: scale(0.88);
+        opacity: 0.65;
+    }
+
+    50% {
+        transform: scale(1.08);
+        opacity: 1;
+    }
+}
+
+.portal-button {
+    position: relative;
+    top: -20px;
+
+    width: 145px;
+    height: 145px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 40% 30%,
+            rgba(255, 255, 255, 0.82),
+            rgba(210, 197, 222, 0.46) 45%,
+            rgba(164, 190, 203, 0.32)
+        );
+
+    border: 1px solid rgba(255, 255, 255, 0.72);
+
+    box-shadow:
+        0 20px 60px rgba(104, 91, 127, 0.18),
+        inset 0 0 35px rgba(255, 255, 255, 0.42);
+
+    backdrop-filter: blur(18px);
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+.portal-button:hover {
+    transform: scale(1.08);
+
+    box-shadow:
+        0 28px 80px rgba(104, 91, 127, 0.24),
+        inset 0 0 45px rgba(255, 255, 255, 0.55);
+}
+
+.portal-button:active {
+    transform: scale(0.97);
+}
+
+.portal-core {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+}
+
+.portal-symbol {
+    font-family: "Playfair Display", serif;
+
+    font-size: 2.4rem;
+
+    color: rgba(73, 68, 84, 0.75);
+}
+
+.portal-text {
+    font-size: 0.58rem;
+    font-weight: 600;
+
+    letter-spacing: 0.32em;
+
+    margin-left: 0.32em;
+
+    color: var(--text-main);
+}
+
+.portal-ring {
+    position: absolute;
+
+    border: 1px solid rgba(255, 255, 255, 0.52);
+
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+.ring-one {
+    inset: -14px;
+
+    animation:
+        ringRotate 14s linear infinite;
+}
+
+.ring-two {
+    inset: -29px;
+
+    border-style: dashed;
+
+    opacity: 0.55;
+
+    animation:
+        ringRotateReverse 22s linear infinite;
+}
+
+.ring-three {
+    inset: -44px;
+
+    opacity: 0.24;
+
+    animation:
+        ringPulse 5s ease-in-out infinite;
+}
+
+@keyframes ringRotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes ringRotateReverse {
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+@keyframes ringPulse {
+    0%,
+    100% {
+        transform: scale(0.96);
+        opacity: 0.18;
+    }
+
+    50% {
+        transform: scale(1.04);
+        opacity: 0.45;
+    }
+}
+
+.entry-hint {
+    position: fixed;
+    left: 0;
+    bottom: 102px;
+
+    width: 100%;
+
+    margin: 0;
+
+    text-align: center;
+
+    font-size: 0.72rem;
+    font-weight: 400;
+
+    letter-spacing: 0.13em;
+
+    color: rgba(102, 101, 117, 0.68);
+
+    opacity: 0.85;
+
+    animation:
+        hintFade 4s ease-in-out infinite;
+}
+
+
+@keyframes hintFade {
+    0%,
+    100% {
+        opacity: 0.45;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+
+/* =========================================================
+   09B. ENTRY REVEAL SEQUENCE
+   ========================================================= */
+
+/*
+    A single orchestrated entrance: each entry element
+    fades and rises into place, staggered by the inline
+    --reveal-delay custom property set in the markup.
+*/
+
+.reveal-item {
+    opacity: 0;
+
+    animation:
+        revealUp 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+    animation-delay: var(--reveal-delay, 0s);
+}
+
+@keyframes revealUp {
+    from {
+        opacity: 0;
+        transform: translateY(22px);
+        filter: blur(6px);
+    }
+
+    to {
+        left: 0;
+        width: 100%;
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+/* =========================================================
+   09C. ENTRY PARALLAX DUST
+   ========================================================= */
+
+.entry-parallax {
+    position: absolute;
+    inset: 0;
+
+    overflow: hidden;
+
+    pointer-events: none;
+}
+
+.entry-orb {
+    position: absolute;
+
+    border-radius: 50%;
+
+    filter: blur(2px);
+
+    opacity: 0.55;
+
+    animation:
+        entryOrbFloat ease-in-out infinite alternate;
+}
+
+.orb-a {
+    top: 20%;
+    left: 16%;
+
+    width: 10px;
+    height: 10px;
+
+    background: rgba(217, 169, 189, 0.8);
+
+    animation-duration: 7s;
+}
+
+.orb-b {
+    top: 68%;
+    left: 82%;
+
+    width: 14px;
+    height: 14px;
+
+    background: rgba(169, 207, 197, 0.7);
+
+    animation-duration: 9s;
+    animation-delay: -2s;
+}
+
+.orb-c {
+    top: 30%;
+    left: 78%;
+
+    width: 8px;
+    height: 8px;
+
+    background: rgba(155, 189, 206, 0.75);
+
+    animation-duration: 8s;
+    animation-delay: -4s;
+}
+
+@keyframes entryOrbFloat {
+    from {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    to {
+        transform: translate3d(10px, -26px, 0) scale(1.3);
+    }
+}
+
+.entry-sparkle {
+    position: absolute;
+
+    font-family: "Playfair Display", serif;
+
+    color: rgba(255, 255, 255, 0.95);
+
+    text-shadow:
+        0 0 14px rgba(217, 169, 189, 0.85),
+        0 0 4px rgba(255, 255, 255, 0.9);
+
+    animation:
+        sparkleTwinkle ease-in-out infinite;
+}
+
+.sparkle-a {
+    top: 15%;
+    left: 24%;
+
+    font-size: 1rem;
+
+    animation-duration: 3.4s;
+}
+
+.sparkle-b {
+    top: 74%;
+    left: 20%;
+
+    font-size: 0.8rem;
+
+    animation-duration: 4.2s;
+    animation-delay: -1s;
+}
+
+.sparkle-c {
+    top: 22%;
+    left: 74%;
+
+    font-size: 1.15rem;
+
+    animation-duration: 3.8s;
+    animation-delay: -2.2s;
+}
+
+.sparkle-d {
+    top: 66%;
+    left: 70%;
+
+    font-size: 0.7rem;
+
+    animation-duration: 5s;
+    animation-delay: -0.6s;
+}
+
+@keyframes sparkleTwinkle {
+    0%,
+    100% {
+        opacity: 0.35;
+        transform: scale(0.7) rotate(0deg);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2) rotate(20deg);
+    }
+}
+
+
+/* =========================================================
+   10. MUSIC INDICATOR
+   ========================================================= */
+
+.music-indicator {
+    position: fixed;
+
+    left: 50%;
+    bottom: 32px;
+
+    transform: translateX(-50%);
+
+    width: auto;
+    max-width: none;
+
+    margin: 0;
+    padding: 9px 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 11px;
+
+    border-radius: 50px;
+
+    background: rgba(var(--glass), calc(0.18 * var(--glass-k)));
+
+    border: 1px solid rgba(var(--glass), calc(0.38 * var(--glass-k)));
+
+    box-shadow:
+        0 10px 35px rgba(91, 83, 110, 0.06),
+        inset 0 0 20px rgba(var(--glass), calc(0.18 * var(--glass-k)));
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    color: var(--text-faint);
+
+    font-size: 0.64rem;
+
+    letter-spacing: 0.07em;
+
+    text-align: center;
+}
+
+.music-indicator-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 2px;
+
+    min-width: 170px;
+}
+
+#music-status {
+    font-size: 0.61rem;
+
+    letter-spacing: 0.12em;
+
+    color: rgba(102, 101, 117, 0.72);
+}
+
+.now-playing-track {
+    font-family: "Playfair Display", serif;
+    font-style: italic;
+
+    font-size: 0.76rem;
+
+    letter-spacing: 0;
+
+    max-width: 100%;
+
+    text-align: center;
+
+    color: rgba(102, 101, 117, 0.82);
+
+    opacity: 0;
+
+    transition: opacity 500ms ease;
+}
+
+.now-playing-track.visible {
+    opacity: 1;
+}
+
+.music-bars {
+    display: flex;
+    align-items: center;
+
+    gap: 2px;
+
+    height: 13px;
+}
+
+.music-bars span {
+    width: 2px;
+    height: 4px;
+
+    border-radius: 4px;
+
+    background: rgba(185, 172, 212, 0.75);
+
+    animation:
+        musicBar 1.2s ease-in-out infinite;
+}
+
+.music-bars span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.music-bars span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.music-bars span:nth-child(4) {
+    animation-delay: 0.45s;
+}
+
+@keyframes musicBar {
+    0%,
+    100% {
+        height: 4px;
+    }
+
+    50% {
+        height: 13px;
+    }
+}
+
+
+/* =========================================================
+   11. MAIN EXPERIENCE
+   ========================================================= */
+
+.main-experience {
+    position: relative;
+
+    min-height: 100vh;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: scale(1.06) translateY(18px);
+    filter: blur(8px);
+
+    transition:
+        opacity 0.75s ease,
+        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0.75s ease;
+}
+
+.main-experience.visible {
+    opacity: 1;
+    visibility: visible;
+
+    transform: scale(1) translateY(0);
+
+    /*
+        "none", not "blur(0)": ANY filter value (even zero) turns this
+        element into a backdrop root, which stops the glass cards'
+        backdrop-filter from seeing the ambient background behind them,
+        so the "frosted glass" never actually frosted anything.
+    */
+    filter: none;
+}
+
+
+/* =========================================================
+   12. NAVBAR
+   ========================================================= */
+
+.navbar {
+    position: relative;
+
+    width: min(1200px, calc(100% - 48px));
+
+    margin: 0 auto;
+
+    padding: 28px 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    z-index: 20;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.brand-mark {
+    width: 32px;
+    height: 32px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(217, 169, 189, 0.6),
+            rgba(185, 172, 212, 0.65),
+            rgba(169, 207, 197, 0.58)
+        );
+
+    box-shadow:
+        0 8px 25px rgba(107, 95, 130, 0.12);
+}
+
+.brand-name {
+    letter-spacing: -0.03em;
+}
+
+.nav-links {
+    display: flex;
+    gap: 36px;
+
+    color: var(--text-soft);
+
+    font-size: 0.82rem;
+}
+
+.nav-links a {
+    position: relative;
+
+    transition: color 300ms ease;
+}
+
+.nav-links a::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    bottom: -7px;
+
+    width: 100%;
+    height: 1px;
+
+    transform: scaleX(0);
+    transform-origin: right;
+
+    background: var(--lavender);
+
+    transition: transform 300ms ease;
+}
+
+.nav-links a:hover {
+    color: var(--text-main);
+}
+
+.nav-links a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.icon-button {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+
+    color: var(--text-main);
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    backdrop-filter: blur(14px);
+
+    transition:
+        transform 300ms ease,
+        background 300ms ease;
+}
+
+.icon-button:hover {
+    transform: rotate(25deg) scale(1.08);
+
+    background: var(--surface-strong);
+}
+
+
+/* =========================================================
+   13. HERO
+   ========================================================= */
+
+.hero-section {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 56px 24px 120px;
+
+    overflow: hidden;
+}
+
+.hero-content {
+    position: relative;
+
+    width: min(850px, 100%);
+
+    text-align: center;
+
+    z-index: 2;
+}
+
+.hero-title {
+    margin-top: 18px;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: clamp(3.2rem, 7vw, 6rem);
+
+    font-weight: 400;
+
+    line-height: 1;
+
+    letter-spacing: -0.045em;
+}
+
+.hero-description {
+    max-width: 520px;
+
+    margin: 26px auto 45px;
+
+    color: var(--text-soft);
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   14. HERO ORBITS
+   ========================================================= */
+
+.hero-orbit {
+    position: absolute;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(var(--glass), calc(0.48 * var(--glass-k)));
+
+    pointer-events: none;
+}
+
+.orbit-one {
+    width: 520px;
+    height: 520px;
+
+    opacity: 0.36;
+
+    animation:
+        orbitFloat 18s linear infinite;
+}
+
+.orbit-two {
+    width: 720px;
+    height: 720px;
+
+    opacity: 0.18;
+
+    animation:
+        orbitFloat 28s linear infinite reverse;
+}
+
+@keyframes orbitFloat {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   15. MOOD CARD
+   ========================================================= */
+
+.mood-card {
+    position: relative;
+
+    width: min(720px, 100%);
+
+    margin: 0 auto;
+
+    padding: 28px;
+
+    border-radius: var(--radius-large);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(var(--glass), calc(0.58 * var(--glass-k))),
+            rgba(var(--glass), calc(0.30 * var(--glass-k)))
+        );
+
+    border: 1px solid rgba(var(--glass), calc(0.68 * var(--glass-k)));
+
+    box-shadow: var(--shadow-soft);
+
+    backdrop-filter: blur(24px);
+
+    text-align: left;
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+.mood-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow: var(--shadow-hover);
+}
+
+/* =========================================================
+   MOOD CARD — INTERNAL PARALLAX
+   The card itself stays completely still.
+   Only the soft decorative light moves.
+   ========================================================= */
+
+.mood-card {
+    --parallax-x: 0px;
+    --parallax-y: 0px;
+
+    --parallax-x-soft: 0px;
+    --parallax-y-soft: 0px;
+
+    overflow: hidden;
+}
+
+
+/* Large soft light */
+
+.mood-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 420px;
+    height: 420px;
+
+    top: -220px;
+    left: -180px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(231, 200, 214, 0.20),
+            rgba(216, 208, 230, 0.10) 40%,
+            transparent 72%
+        );
+
+    transform:
+        translate3d(
+            var(--parallax-x),
+            var(--parallax-y),
+            0
+        );
+
+    filter: blur(8px);
+
+    pointer-events: none;
+
+    transition:
+        transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* Smaller cool light */
+
+.mood-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 300px;
+    height: 300px;
+
+    right: -160px;
+    bottom: -180px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(169, 207, 197, 0.16),
+            rgba(155, 189, 206, 0.08) 42%,
+            transparent 72%
+        );
+
+    transform:
+        translate3d(
+            var(--parallax-x-soft),
+            var(--parallax-y-soft),
+            0
+        );
+
+    filter: blur(10px);
+
+    pointer-events: none;
+
+    transition:
+        transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* Keep all actual content above the decorative layers */
+
+.mood-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.mood-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+}
+
+.input-label {
+    display: block;
+
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.input-subtitle {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--text-faint);
+
+    font-size: 0.73rem;
+}
+
+.emotion-orb {
+    width: 18px;
+    height: 18px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--pink),
+            var(--lavender),
+            var(--mint)
+        );
+
+    box-shadow:
+        0 0 20px rgba(185, 172, 212, 0.45);
+
+    animation:
+        orbPulse 3s ease-in-out infinite;
+}
+
+@keyframes orbPulse {
+    0%,
+    100% {
+        transform: scale(0.8);
+        opacity: 0.65;
+    }
+
+    50% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+}
+
+
+/* =========================================================
+   16. TEXTAREA
+   ========================================================= */
+
+.textarea-wrapper {
+    position: relative;
+}
+
+#mood-input {
+    width: 100%;
+
+    min-height: 155px;
+
+    resize: vertical;
+
+    padding: 20px;
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-medium);
+
+    outline: none;
+
+    background:
+        rgba(var(--glass), calc(0.42 * var(--glass-k)));
+
+    color: var(--text-main);
+
+    font-size: 0.95rem;
+
+    line-height: 1.7;
+
+    transition:
+        border-color 300ms ease,
+        box-shadow 300ms ease,
+        background 300ms ease;
+}
+
+/* =========================================================
+   MOOD INPUT — FRIENDLY INVALID INPUT MESSAGE
+   ========================================================= */
+
+.mood-error {
+    display: none;
+
+    margin-top: 12px;
+    padding: 11px 14px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(231, 200, 214, 0.16);
+
+    border: 1px solid rgba(217, 169, 189, 0.22);
+
+    color: var(--text-soft);
+
+    text-align: left;
+
+    animation:
+        moodErrorIn 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mood-error.visible {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.mood-error-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+
+    color: var(--text-main);
+}
+
+.mood-error-message {
+    font-size: 0.66rem;
+
+    line-height: 1.5;
+
+    color: var(--text-faint);
+}
+
+@keyframes moodErrorIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Gentle invalid-input emphasis */
+
+#mood-input.input-invalid {
+    border-color: rgba(217, 169, 189, 0.45);
+
+    box-shadow:
+        0 0 0 4px rgba(217, 169, 189, 0.08);
+}
+
+#mood-input::placeholder {
+    color: rgba(102, 101, 117, 0.58);
+}
+
+#mood-input:focus {
+    border-color: rgba(185, 172, 212, 0.58);
+
+    background:
+        rgba(var(--glass), calc(0.62 * var(--glass-k)));
+
+    box-shadow:
+        0 0 0 5px rgba(185, 172, 212, 0.09);
+}
+
+.character-count {
+    position: absolute;
+
+    right: 16px;
+    bottom: 12px;
+
+    font-size: 0.66rem;
+
+    color: var(--text-faint);
+}
+
+
+/* =========================================================
+   17. MOOD CARD FOOTER
+   ========================================================= */
+
+.mood-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-top: 18px;
+}
+
+.privacy-note {
+    color: var(--text-faint);
+
+    font-size: 0.67rem;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   18. PRIMARY BUTTON
+   ========================================================= */
+
+.primary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 18px;
+
+    padding: 14px 19px 14px 22px;
+
+    border-radius: 50px;
+
+    color: #393641;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(231, 200, 214, 0.78),
+            rgba(216, 208, 230, 0.82),
+            rgba(208, 229, 222, 0.78)
+        );
+
+    border: 1px solid rgba(var(--glass), calc(0.62 * var(--glass-k)));
+
+    box-shadow:
+        0 12px 35px rgba(96, 87, 117, 0.12);
+
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition:
+        transform 300ms ease,
+        box-shadow 300ms ease;
+}
+
+.primary-button:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 18px 45px rgba(96, 87, 117, 0.18);
+}
+
+.button-arrow {
+    font-size: 1rem;
+
+    transition:
+        transform 300ms ease;
+}
+
+.primary-button:hover .button-arrow {
+    transform: translateX(4px);
+}
+
+
+/* =========================================================
+   18B. TILT CARDS
+   ========================================================= */
+
+/*
+    Cards that respond to the cursor with a gentle 3D tilt.
+    JavaScript sets the full transform (rotation + lift)
+    directly as an inline style while the cursor is over the
+    card, and clears it on mouseleave — this transition is
+    what makes that inline change feel smooth either way.
+*/
+
+.tilt-card {
+    transition:
+        transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow var(--transition);
+
+    will-change: transform;
+}
+
+
+/* =========================================================
+   19. FLOATING NOTES
+   ========================================================= */
+
+.floating-note {
+    position: absolute;
+
+    font-family: "Playfair Display", serif;
+
+    color: rgba(117, 105, 137, 0.22);
+
+    pointer-events: none;
+
+    animation:
+        noteFloat 7s ease-in-out infinite;
+}
+
+.note-one {
+    top: 25%;
+    left: 12%;
+
+    font-size: 2rem;
+}
+
+.note-two {
+    top: 58%;
+    right: 13%;
+
+    font-size: 2.6rem;
+
+    animation-delay: -2s;
+}
+
+.note-three {
+    bottom: 14%;
+    left: 22%;
+
+    font-size: 1.5rem;
+
+    animation-delay: -4s;
+}
+
+@keyframes noteFloat {
+    0%,
+    100% {
+        transform: translateY(0) rotate(-5deg);
+    }
+
+    50% {
+        transform: translateY(-18px) rotate(7deg);
+    }
+}
+
+
+/* =========================================================
+   20. SECTION COMMON
+   ========================================================= */
+
+section:not(.entry-screen) {
+    scroll-margin-top: 80px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.emotion-section,
+.playlist-section,
+.music-section,
+.how-section,
+.future-section {
+    width: min(1100px, calc(100% - 48px));
+
+    margin: 0 auto;
+
+    padding: 120px 0;
+}
+
+.section-heading {
+    text-align: center;
+
+    margin-bottom: 55px;
+}
+
+.section-heading h2,
+.music-heading h2 {
+    margin-top: 15px;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+
+    font-weight: 400;
+
+    line-height: 1.05;
+
+    letter-spacing: -0.035em;
+}
+
+
+/* =========================================================
+   21. EMOTION RESULT
+   ========================================================= */
+
+.emotion-card {
+    width: min(720px, 100%);
+
+    margin: 0 auto;
+
+    padding: 42px;
+
+    text-align: center;
+
+    border-radius: var(--radius-large);
+
+    background:
+        rgba(var(--glass), calc(0.38 * var(--glass-k)));
+
+    border: 1px solid rgba(var(--glass), calc(0.58 * var(--glass-k)));
+
+    box-shadow: var(--shadow-soft);
+
+    backdrop-filter: blur(20px);
+}
+
+.emotion-card h3 {
+    margin-top: 16px;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: clamp(2rem, 4vw, 3rem);
+
+    font-weight: 400;
+}
+
+#detected-emotion {
+    color: var(--lavender);
+    font-style: italic;
+}
+
+.emotion-confidence {
+    max-width: 400px;
+
+    margin: 30px auto 0;
+
+    display: grid;
+
+    grid-template-columns: auto 1fr auto;
+
+    align-items: center;
+
+    gap: 12px;
+
+    font-size: 0.68rem;
+
+    color: var(--text-faint);
+}
+
+.confidence-bar {
+    height: 5px;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background: rgba(120, 110, 140, 0.10);
+}
+
+.confidence-fill {
+    width: 0;
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--pink),
+            var(--lavender),
+            var(--blue)
+        );
+
+    transition:
+        width 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* =========================================================
+   22. PLAYLIST OPTIONS
+   ========================================================= */
+
+.playlist-context-note {
+    max-width: 520px;
+
+    margin: 14px auto 0;
+
+    color: var(--text-soft);
+
+    font-size: 0.85rem;
+
+    line-height: 1.7;
+}
+
+.playlist-options {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 24px;
+
+    transition: grid-template-columns 300ms ease;
+}
+
+/*
+    Positive / neutral moods only get the Mood-Based
+    option, so the grid collapses to a single, centred card
+    instead of leaving an empty slot.
+*/
+
+.playlist-options.single-option {
+    grid-template-columns:
+        minmax(0, 560px);
+
+    justify-content: center;
+}
+
+.playlist-option {
+    position: relative;
+
+    min-height: 270px;
+
+    padding: 34px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    text-align: left;
+
+    border-radius: var(--radius-large);
+
+    background:
+        rgba(var(--glass), calc(0.40 * var(--glass-k)));
+
+    border: 1px solid rgba(var(--glass), calc(0.58 * var(--glass-k)));
+
+    box-shadow: var(--shadow-soft);
+
+    backdrop-filter: blur(20px);
+
+    color: var(--text-main);
+
+    overflow: hidden;
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+.playlist-option::before {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    top: -70px;
+    right: -50px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(216, 208, 230, 0.5),
+            transparent 70%
+        );
+
+    transition:
+        transform 600ms ease;
+}
+
+.playlist-option:hover {
+    transform: translateY(-8px);
+
+    box-shadow: var(--shadow-hover);
+}
+
+.playlist-option:hover::before {
+    transform: scale(1.5);
+}
+
+.playlist-option.recommended {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(231, 200, 214, 0.40),
+            rgba(216, 208, 230, 0.38),
+            rgba(208, 229, 222, 0.34)
+        );
+}
+
+.option-icon {
+    width: 52px;
+    height: 52px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 17px;
+
+    background:
+        rgba(var(--glass), calc(0.48 * var(--glass-k)));
+
+    font-size: 1.3rem;
+
+    box-shadow:
+        0 10px 30px rgba(92, 83, 110, 0.08);
+}
+
+.option-content {
+    margin-top: 30px;
+}
+
+.option-tag {
+    font-size: 0.59rem;
+    font-weight: 600;
+
+    letter-spacing: 0.2em;
+
+    color: var(--text-faint);
+}
+
+.option-content h3 {
+    margin-top: 9px;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 1.7rem;
+
+    font-weight: 500;
+}
+
+.option-content p {
+    max-width: 390px;
+
+    margin-top: 10px;
+
+    color: var(--text-soft);
+
+    font-size: 0.82rem;
+
+    line-height: 1.7;
+}
+
+.option-arrow {
+    position: absolute;
+
+    right: 30px;
+    bottom: 30px;
+
+    font-size: 1.2rem;
+
+    opacity: 0.45;
+
+    transition:
+        transform 300ms ease,
+        opacity 300ms ease;
+}
+
+.playlist-option:hover .option-arrow {
+    transform: translateX(5px);
+
+    opacity: 1;
+}
+
+.playlist-option.selected {
+    border-color: rgba(var(--glass), calc(0.85 * var(--glass-k)));
+
+    box-shadow: var(--shadow-hover);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(231, 200, 214, 0.5),
+            rgba(216, 208, 230, 0.46),
+            rgba(208, 229, 222, 0.42)
+        );
+}
+
+.recommended-badge {
+    position: absolute;
+
+    top: 22px;
+    right: 22px;
+
+    padding: 7px 11px;
+
+    border-radius: 50px;
+
+    background:
+        rgba(var(--glass), calc(0.48 * var(--glass-k)));
+
+    border: 1px solid rgba(var(--glass), calc(0.55 * var(--glass-k)));
+
+    font-size: 0.53rem;
+    font-weight: 600;
+
+    letter-spacing: 0.15em;
+
+    color: var(--text-soft);
+}
+
+
+/* =========================================================
+   23. MUSIC SECTION
+   ========================================================= */
+
+.music-heading {
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 30px;
+
+    margin-bottom: 40px;
+}
+
+.playlist-mood {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 15px;
+
+    border-radius: 50px;
+
+    background:
+        rgba(var(--glass), calc(0.42 * var(--glass-k)));
+
+    border: 1px solid var(--border);
+
+    font-size: 0.68rem;
+
+    color: var(--text-soft);
+}
+
+.mood-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: var(--lavender);
+
+    box-shadow:
+        0 0 12px rgba(185, 172, 212, 0.7);
+}
+
+/*
+    TWO BOXES side by side:
+      1. .stage-player  — the player
+      2. .ai-panel      — the AIMuse playlist (YouTube), OR
+         .sample-panel  — sample songs (static/moods)
+      Only one list shows at a time (script.js: setStageView).
+*/
+
+.music-section {
+    width: min(1380px, calc(100% - 48px));
+}
+
+.music-stage {
+    display: grid;
+
+    /* player + ONE list (YouTube or samples — see setStageView) */
+    grid-template-columns:
+        minmax(0, 1.35fr)
+        minmax(0, 1fr);
+
+    align-items: stretch;
+
+    gap: 22px;
+}
+
+.stage-player {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+    min-height: 460px;
+}
+
+.stage-player > .player-placeholder,
+.stage-player > .youtube-player-wrap {
+    flex: 1;
+}
+
+.player-placeholder,
+.playlist-panel,
+.youtube-player-wrap {
+    min-height: 460px;
+
+    border-radius: var(--radius-large);
+
+    background:
+        rgba(var(--glass), calc(0.38 * var(--glass-k)));
+
+    border: 1px solid rgba(var(--glass), calc(0.58 * var(--glass-k)));
+
+    box-shadow: var(--shadow-soft);
+
+    backdrop-filter: blur(20px);
+}
+
+
+/* =========================================================
+   24D. THREE-BOX MUSIC STAGE — PANELS, STATES, CHIPS
+   ========================================================= */
+
+.playlist-panel {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+}
+
+.playlist-panel .song-list {
+    flex: 1;
+
+    min-height: 0;
+    max-height: 340px;
+
+    padding-right: 4px;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--lavender-soft) transparent;
+}
+
+.playlist-panel-header span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* A small coloured marker tells the two lists apart at a glance. */
+
+.ai-panel .playlist-panel-header span:first-child::before,
+.sample-panel .playlist-panel-header span:first-child::before {
+    content: "";
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+}
+
+.ai-panel .playlist-panel-header span:first-child::before {
+    background: var(--pink);
+
+    box-shadow: 0 0 10px rgba(217, 169, 189, 0.8);
+}
+
+.sample-panel .playlist-panel-header span:first-child::before {
+    background: var(--mint);
+
+    box-shadow: 0 0 10px rgba(169, 207, 197, 0.8);
+}
+
+.song-info {
+    flex: 1;
+
+    min-width: 0;
+}
+
+.song-artist {
+    overflow: hidden;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Songs that turned out not to play. */
+
+.song-item.unavailable {
+    opacity: 0.42;
+
+    text-decoration: line-through;
+
+    cursor: not-allowed;
+}
+
+.song-item.unavailable:hover {
+    background: transparent;
+
+    transform: none;
+}
+
+/* Loading skeleton while YouTube is being searched. */
+
+.song-skeleton {
+    height: 52px;
+
+    margin: 8px 0;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            100deg,
+            rgba(var(--glass), calc(0.22 * var(--glass-k))) 20%,
+            rgba(var(--glass), calc(0.62 * var(--glass-k))) 50%,
+            rgba(var(--glass), calc(0.22 * var(--glass-k))) 80%
+        );
+
+    background-size: 220% 100%;
+
+    animation: skeletonShimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+    from { background-position: 120% 0; }
+    to   { background-position: -120% 0; }
+}
+
+/* Messages inside a panel (no key, quota, offline...). */
+
+.panel-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 42px 14px;
+
+    text-align: center;
+}
+
+.panel-empty p,
+.panel-empty-note {
+    color: var(--text-soft);
+
+    font-size: 0.74rem;
+
+    line-height: 1.7;
+}
+
+.panel-empty-note {
+    padding: 18px 8px;
+
+    color: var(--text-faint);
+}
+
+.panel-retry,
+.panel-link {
+    padding: 9px 18px;
+
+    border: 1px solid var(--border);
+    border-radius: 50px;
+
+    background: rgba(var(--glass), calc(0.5 * var(--glass-k)));
+
+    color: var(--text-main);
+
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        background 250ms ease,
+        transform 250ms ease;
+}
+
+.panel-retry:hover,
+.panel-link:hover {
+    background: rgba(var(--glass), calc(0.85 * var(--glass-k)));
+
+    transform: translateY(-1px);
+}
+
+.panel-actions {
+    display: flex;
+    justify-content: flex-start;
+
+    margin-top: 12px;
+}
+
+.panel-actions:empty {
+    display: none;
+}
+
+.playlist-panel .playlist-panel-note {
+    margin-top: auto;
+}
+
+.playlist-panel .panel-actions + .playlist-panel-note {
+    margin-top: 12px;
+}
+
+/* "What AIMuse understood" chips in the mood result card. */
+
+.understanding {
+    margin-top: 26px;
+    padding-top: 22px;
+
+    border-top: 1px solid var(--border);
+}
+
+.understanding-headline {
+    margin-bottom: 14px;
+
+    color: var(--text-faint);
+
+    font-size: 0.66rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.understanding-chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    gap: 8px;
+}
+
+.understanding-chip {
+    padding: 7px 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 50px;
+
+    background: rgba(var(--glass), calc(0.52 * var(--glass-k)));
+
+    color: var(--text-soft);
+
+    font-size: 0.72rem;
+
+    animation: chipIn 500ms var(--transition) both;
+}
+
+.understanding-chip:nth-child(2) { animation-delay: 60ms; }
+.understanding-chip:nth-child(3) { animation-delay: 120ms; }
+.understanding-chip:nth-child(4) { animation-delay: 180ms; }
+.understanding-chip:nth-child(5) { animation-delay: 240ms; }
+.understanding-chip:nth-child(n+6) { animation-delay: 300ms; }
+
+.chip-mood     { background: rgba(231, 200, 214, 0.55); color: var(--text-main); }
+.chip-energy   { background: rgba(196, 220, 228, 0.55); }
+.chip-context  { background: rgba(216, 208, 230, 0.55); }
+.chip-activity { background: rgba(208, 229, 222, 0.6); }
+.chip-language,
+.chip-genre,
+.chip-artist   { background: rgba(255, 255, 255, 0.72); }
+
+@keyframes chipIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.mood-playlist-count {
+    margin-left: 6px;
+}
+
+/* Tablet: the player takes the full top row, lists sit below. */
+
+@media (max-width: 1180px) {
+
+    .music-stage {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stage-player {
+        grid-column: 1 / -1;
+
+        min-height: 420px;
+    }
+
+}
+
+/* Clicking around the player shouldn't paint the heading and
+   song title with the browser's text-selection highlight. */
+
+.music-heading,
+.player-placeholder,
+.playlist-mood,
+.playlist-panel-header {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+
+/* =========================================================
+   CARE CARD — shown only when the words sound like distress
+   =========================================================
+   Deliberately calm: no animation, no alarm colours. A soft
+   mint wash (the "breathing room" colour of the palette) and
+   plain, readable text.
+   ========================================================= */
+
+.care-card {
+    margin-top: 22px;
+    padding: 18px 20px;
+
+    border-radius: var(--radius-medium);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(144, 209, 191, 0.22),
+            rgba(195, 222, 240, 0.20)
+        );
+
+    border: 1px solid rgba(144, 209, 191, 0.45);
+
+    text-align: left;
+}
+
+.care-card.hidden {
+    display: none;
+}
+
+.care-title {
+    margin: 0 0 8px;
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.05rem;
+    line-height: 1.4;
+
+    color: var(--text-main);
+}
+
+.care-text {
+    margin: 0;
+
+    font-size: 0.92rem;
+    line-height: 1.65;
+
+    color: var(--text-soft);
+}
+
+.care-text + .care-text {
+    margin-top: 8px;
+}
+
+.care-soft {
+    color: var(--text-faint);
+}
+
+.care-card a {
+    color: var(--text-main);
+    font-weight: 600;
+
+    text-decoration: underline;
+    text-decoration-color: rgba(144, 209, 191, 0.9);
+    text-underline-offset: 3px;
+}
+
+.care-card a:focus-visible {
+    outline: 2px solid var(--mint);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+body.dark-theme .care-card {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(144, 209, 191, 0.12),
+            rgba(125, 179, 221, 0.10)
+        );
+
+    border-color: rgba(144, 209, 191, 0.30);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .song-skeleton,
+    .understanding-chip {
+        animation: none;
+    }
+
+}
+
+
+/* =========================================================
+   24C. YOUTUBE PLAYER
+   ========================================================= */
+
+.youtube-player-wrap {
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 0;
+}
+
+.youtube-player-wrap.hidden {
+    display: none;
+}
+
+.youtube-player-wrap iframe,
+.youtube-player {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    border: none;
+    border-radius: var(--radius-large);
+}
+
+.player-placeholder {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.player-symbol {
+    width: 80px;
+    height: 80px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(231, 200, 214, 0.55),
+            rgba(216, 208, 230, 0.55),
+            rgba(208, 229, 222, 0.5)
+        );
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 2rem;
+
+    box-shadow:
+        0 20px 50px rgba(91, 83, 110, 0.12);
+}
+
+.player-placeholder p {
+    margin-top: 25px;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 1.5rem;
+
+    transition: color 300ms ease;
+}
+
+.player-placeholder span {
+    margin-top: 8px;
+
+    color: var(--text-faint);
+
+    font-size: 0.68rem;
+}
+
+.player-placeholder.playing .player-symbol {
+    animation:
+        orbPulse 2.2s ease-in-out infinite;
+}
+
+.player-placeholder.playing p {
+    color: var(--lavender);
+
+    font-style: italic;
+}
+
+
+/* =========================================================
+   24. PLAYLIST PANEL
+   ========================================================= */
+
+.playlist-panel {
+    padding: 25px;
+
+    overflow: hidden;
+}
+
+.playlist-panel-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: 0.65rem;
+
+    letter-spacing: 0.13em;
+
+    color: var(--text-faint);
+}
+
+.song-list {
+    margin-top: 10px;
+
+    max-height: 380px;
+
+    overflow-y: auto;
+}
+
+.song-item {
+    width: 100%;
+
+    padding: 15px 8px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    border-bottom: 1px solid rgba(90, 85, 110, 0.07);
+    border-radius: 12px;
+
+    background: transparent;
+
+    color: inherit;
+    text-align: left;
+
+    font-size: 0.78rem;
+
+    cursor: pointer;
+
+    transition:
+        background 250ms ease,
+        transform 250ms ease;
+}
+
+.song-item:hover {
+    background: rgba(var(--glass), calc(0.4 * var(--glass-k)));
+
+    transform: translateX(3px);
+}
+
+.song-item.playing {
+    background:
+        linear-gradient(
+            120deg,
+            rgba(231, 200, 214, 0.4),
+            rgba(216, 208, 230, 0.36)
+        );
+}
+
+.song-item.playing .song-title::after {
+    content: "  ♪ playing";
+
+    color: var(--lavender);
+
+    font-size: 0.63rem;
+
+    font-style: italic;
+}
+
+.song-number {
+    flex-shrink: 0;
+
+    color: var(--text-faint);
+
+    font-size: 0.65rem;
+}
+
+.song-info {
+    overflow: hidden;
+}
+
+.song-title {
+    overflow: hidden;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.song-artist {
+    margin-top: 3px;
+
+    color: var(--text-faint);
+
+    font-size: 0.65rem;
+}
+
+.playlist-panel-note {
+    margin-top: 16px;
+    padding-top: 16px;
+
+    border-top: 1px solid var(--border);
+
+    color: var(--text-faint);
+
+    font-size: 0.64rem;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   24B. DISCOVERY — "DON'T KNOW WHAT TO LISTEN TO?"
+   ========================================================= */
+
+.no-idea-section {
+    width: min(1100px, calc(100% - 48px));
+
+    margin: 0 auto;
+
+    padding: 120px 0;
+}
+
+.no-idea-subtitle {
+    max-width: 480px;
+
+    margin: 16px auto 0;
+
+    color: var(--text-soft);
+
+    line-height: 1.8;
+}
+
+.subsection-label {
+    display: block;
+
+    margin-bottom: 20px;
+
+    font-size: 0.62rem;
+    font-weight: 600;
+
+    letter-spacing: 0.24em;
+
+    color: var(--text-faint);
+}
+
+.original-tracks {
+    margin-bottom: 60px;
+}
+
+.original-tracks-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+.original-track-card {
+    position: relative;
+
+    padding: 22px 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 16px;
+
+    border-radius: var(--radius-medium);
+
+    background:
+        rgba(var(--glass), calc(0.4 * var(--glass-k)));
+
+    border: 1px solid rgba(var(--glass), calc(0.58 * var(--glass-k)));
+
+    box-shadow: var(--shadow-soft);
+
+    backdrop-filter: blur(18px);
+
+    color: inherit;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition),
+        background var(--transition);
+}
+
+.original-track-card:hover {
+    transform: translateY(-6px);
+
+    box-shadow: var(--shadow-hover);
+}
+
+.original-track-card.playing {
+    background:
+        linear-gradient(
+            140deg,
+            rgba(231, 200, 214, 0.42),
+            rgba(216, 208, 230, 0.4)
+        );
+
+    border-color: rgba(var(--glass), calc(0.75 * var(--glass-k)));
+}
+
+.track-card-icon {
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 13px;
+
+    background: rgba(var(--glass), calc(0.5 * var(--glass-k)));
+
+    font-size: 1.05rem;
+
+    transition: transform 300ms ease;
+}
+
+.original-track-card.playing .track-card-icon {
+    animation:
+        orbPulse 2s ease-in-out infinite;
+}
+
+.track-card-title {
+    font-family: "Playfair Display", serif;
+
+    font-size: 1.02rem;
+
+    line-height: 1.35;
+}
+
+.track-card-subtitle {
+    margin-top: -8px;
+
+    color: var(--text-faint);
+
+    font-size: 0.63rem;
+
+    letter-spacing: 0.06em;
+}
+
+.mood-tabs {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-bottom: 24px;
+}
+
+.mood-tab {
+    padding: 10px 18px;
+
+    border-radius: 50px;
+
+    background: rgba(var(--glass), calc(0.38 * var(--glass-k)));
+
+    border: 1px solid rgba(var(--glass), calc(0.55 * var(--glass-k)));
+
+    color: var(--text-soft);
+
+    font-size: 0.72rem;
+    font-weight: 500;
+
+    transition:
+        background 250ms ease,
+        color 250ms ease,
+        transform 250ms ease;
+}
+
+.mood-tab:hover {
+    transform: translateY(-2px);
+}
+
+.mood-tab.active {
+    background:
+        linear-gradient(
+            120deg,
+            rgba(231, 200, 214, 0.75),
+            rgba(216, 208, 230, 0.78),
+            rgba(208, 229, 222, 0.75)
+        );
+
+    border-color: rgba(var(--glass), calc(0.7 * var(--glass-k)));
+
+    color: var(--text-main);
+}
+
+.mood-playlist-panel {
+    padding: 28px;
+
+    border-radius: var(--radius-large);
+
+    background: rgba(var(--glass), calc(0.36 * var(--glass-k)));
+
+    border: 1px solid rgba(var(--glass), calc(0.55 * var(--glass-k)));
+
+    box-shadow: var(--shadow-soft);
+
+    backdrop-filter: blur(18px);
+}
+
+.mood-playlist-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 6px;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 1.3rem;
+}
+
+.mood-playlist-heading span {
+    font-family: "DM Sans", sans-serif;
+
+    font-size: 0.65rem;
+
+    color: var(--text-faint);
+}
+
+.mood-playlist-list {
+    margin-top: 16px;
+}
+
+
+/* =========================================================
+   25. HOW IT WORKS
+   ========================================================= */
+
+.steps-container {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 22px;
+}
+
+.step-card {
+    position: relative;
+
+    padding: 35px;
+
+    min-height: 260px;
+
+    border-radius: var(--radius-large);
+
+    background:
+        rgba(var(--glass), calc(0.32 * var(--glass-k)));
+
+    border: 1px solid rgba(var(--glass), calc(0.52 * var(--glass-k)));
+
+    box-shadow: var(--shadow-soft);
+
+    backdrop-filter: blur(18px);
+
+    transition:
+        transform var(--transition),
+        background var(--transition);
+}
+
+.step-card:hover {
+    transform: translateY(-8px);
+
+    background:
+        rgba(var(--glass), calc(0.46 * var(--glass-k)));
+}
+
+.step-number {
+    position: absolute;
+
+    top: 22px;
+    right: 25px;
+
+    font-size: 0.6rem;
+
+    letter-spacing: 0.15em;
+
+    color: var(--text-faint);
+}
+
+.step-icon {
+    width: 48px;
+    height: 48px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 15px;
+
+    background:
+        rgba(var(--glass), calc(0.45 * var(--glass-k)));
+
+    font-size: 1.25rem;
+}
+
+.step-card h3 {
+    margin-top: 28px;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 1.45rem;
+}
+
+.step-card p {
+    margin-top: 10px;
+
+    color: var(--text-soft);
+
+    font-size: 0.78rem;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   26. FUTURE SECTION
+   ========================================================= */
+
+.future-section {
+    position: relative;
+
+    min-height: 650px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    overflow: hidden;
+}
+
+.future-glow {
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(185, 172, 212, 0.22),
+            transparent 68%
+        );
+
+    filter: blur(15px);
+
+    pointer-events: none;
+}
+
+.future-orb {
+    position: absolute;
+
+    top: 20%;
+    right: 18%;
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: rgba(169, 207, 197, 0.75);
+
+    filter: blur(1px);
+
+    animation:
+        depthDrift 10s ease-in-out infinite alternate;
+}
+
+.future-section h2 {
+    position: relative;
+
+    max-width: 850px;
+
+    margin-top: 18px;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: clamp(2.6rem, 5vw, 4.7rem);
+
+    font-weight: 400;
+
+    line-height: 1.05;
+
+    letter-spacing: -0.04em;
+}
+
+.future-section > p:not(.section-eyebrow) {
+    position: relative;
+
+    max-width: 550px;
+
+    margin-top: 24px;
+
+    color: var(--text-soft);
+
+    line-height: 1.8;
+}
+
+.future-modes {
+    position: relative;
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 35px;
+}
+
+.future-modes span {
+    padding: 9px 14px;
+
+    border-radius: 50px;
+
+    background:
+        rgba(var(--glass), calc(0.38 * var(--glass-k)));
+
+    border: 1px solid rgba(var(--glass), calc(0.55 * var(--glass-k)));
+
+    color: var(--text-faint);
+
+    font-size: 0.58rem;
+
+    letter-spacing: 0.17em;
+}
+
+
+/* =========================================================
+   27. FOOTER
+   ========================================================= */
+
+.footer {
+    width: min(1100px, calc(100% - 48px));
+
+    margin: 0 auto;
+
+    padding: 40px 0 55px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    border-top: 1px solid var(--border);
+
+    color: var(--text-faint);
+
+    font-size: 0.68rem;
+}
+
+.footer-brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: var(--text-main);
+
+    font-weight: 600;
+}
+
+.footer-brand .brand-mark {
+    width: 25px;
+    height: 25px;
+
+    font-size: 0.75rem;
+}
+
+.footer-note {
+    opacity: 0.7;
+}
+
+
+/* =========================================================
+   28. PORTAL TRANSITION VIDEO
+   ========================================================= */
+
+/*
+    Fills the screen with the entry-animation clip between
+    the entry screen and the main experience. The background
+    AIMuse track keeps playing underneath — this clip has no
+    audio of its own.
+*/
+
+.portal-transition {
+    position: fixed;
+    inset: 0;
+
+    z-index: 200;
+
+    background: #000;
+
+    opacity: 0;
+    visibility: hidden;
+
+    pointer-events: none;
+
+    /* fading OUT (the default state): a soft dissolve into the site */
+    transition:
+        opacity 550ms ease,
+        visibility 550ms ease;
+}
+
+.portal-transition.active {
+    /* fading IN: quick */
+    transition:
+        opacity 260ms ease,
+        visibility 260ms ease;
+
+    opacity: 1;
+    visibility: visible;
+
+    pointer-events: auto;
+}
+
+.portal-video {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.portal-skip {
+    position: absolute;
+
+    top: 28px;
+    right: 28px;
+
+    padding: 10px 22px;
+
+    border-radius: 50px;
+
+    background: rgba(255, 255, 255, 0.16);
+
+    border: 1px solid rgba(255, 255, 255, 0.4);
+
+    color: rgba(255, 255, 255, 0.92);
+
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+
+    backdrop-filter: blur(10px);
+
+    opacity: 0;
+
+    transition:
+        opacity 300ms ease,
+        background 250ms ease,
+        transform 250ms ease;
+}
+
+.portal-transition.active .portal-skip {
+    opacity: 1;
+
+    transition-delay: 400ms;
+}
+
+.portal-skip:hover {
+    background: rgba(255, 255, 255, 0.28);
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   28B. PERSISTENT MINI PLAYER
+   ========================================================= */
+
+.mini-player {
+    position: fixed;
+
+    top: 22px;
+    right: 22px;
+    left: auto;
+    bottom: auto;
+
+    transform:
+        translateX(120%);
+
+    z-index: 250;
+
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 12px 16px 12px 18px;
+
+    width: min(320px, calc(100% - 40px));
+
+    border-radius: 50px;
+
+    background: rgba(var(--glass), calc(0.78 * var(--glass-k)));
+
+    border: 1px solid rgba(var(--glass), calc(0.85 * var(--glass-k)));
+
+    box-shadow:
+        0 18px 40px rgba(90, 70, 100, 0.22),
+        0 2px 10px rgba(90, 70, 100, 0.12);
+
+    backdrop-filter: blur(24px);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 500ms ease;
+}
+
+.mini-player.visible {
+    transform:
+        translateX(0);
+
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+.mini-player-bars {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+
+    height: 16px;
+
+    flex-shrink: 0;
+}
+
+.mini-player-bars span {
+    width: 2px;
+    height: 6px;
+
+    border-radius: 4px;
+
+    background: var(--lavender);
+
+    animation:
+        musicBar 1s ease-in-out infinite;
+}
+
+.mini-player.paused .mini-player-bars span {
+    animation-play-state: paused;
+
+    height: 4px;
+}
+
+.mini-player-bars span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.mini-player-bars span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.mini-player-bars span:nth-child(4) {
+    animation-delay: 0.45s;
+}
+
+.mini-player-info {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+
+    overflow: hidden;
+
+    flex: 1;
+}
+
+.mini-player-label {
+    font-size: 0.58rem;
+    font-weight: 600;
+
+    letter-spacing: 0.14em;
+
+    color: var(--text-faint);
+}
+
+.mini-player-track {
+    overflow: hidden;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    font-family: "Playfair Display", serif;
+    font-style: italic;
+
+    font-size: 0.88rem;
+}
+
+.mini-player-toggle {
+    flex-shrink: 0;
+
+    width: 34px;
+    height: 34px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: rgba(var(--glass), calc(0.55 * var(--glass-k)));
+
+    border: 1px solid var(--border);
+
+    font-size: 0.7rem;
+
+    color: var(--text-main);
+
+    transition:
+        transform 300ms ease,
+        background 300ms ease;
+}
+
+.mini-player-toggle:hover {
+    transform: scale(1.08);
+
+    background: rgba(var(--glass), calc(0.8 * var(--glass-k)));
+}
+
+
+/* =========================================================
+   29. CUSTOM SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            var(--pink),
+            var(--lavender),
+            var(--blue)
+        );
+}
+
+
+/* =========================================================
+   30. RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .nav-links {
+        display: none;
+    }
+
+    .playlist-options {
+        grid-template-columns: 1fr;
+    }
+
+    .music-stage {
+        grid-template-columns: 1fr;
+    }
+
+    .steps-container {
+        grid-template-columns: 1fr;
+    }
+
+    .music-heading {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .floating-note {
+        opacity: 0.5;
+    }
+
+    .original-tracks-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   31. RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .navbar {
+        width: min(100% - 30px, 1200px);
+
+        padding-top: 20px;
+    }
+
+    .hero-section {
+        padding-top: 70px;
+        padding-bottom: 100px;
+    }
+
+    .entry-title {
+        font-size: clamp(3rem, 16vw, 5rem);
+    }
+
+    .entry-description {
+        font-size: 0.88rem;
+    }
+
+    .portal-wrapper {
+        transform: scale(0.86);
+    }
+
+    .music-indicator {
+        bottom: 18px;
+
+        font-size: 0.58rem;
+    }
+
+    .entry-hint {
+        bottom: 68px;
+
+        max-width: none;
+    }
+
+    .mood-card {
+        padding: 20px;
+
+        border-radius: 25px;
+    }
+
+    .mood-card-footer {
+        align-items: stretch;
+
+        flex-direction: column;
+    }
+
+    .primary-button {
+        width: 100%;
+    }
+
+    .emotion-confidence {
+        grid-template-columns: 1fr;
+
+        text-align: center;
+    }
+
+    .emotion-card {
+        padding: 30px 20px;
+    }
+
+    .emotion-section,
+    .playlist-section,
+    .music-section,
+    .no-idea-section,
+    .how-section,
+    .future-section {
+        width: min(100% - 30px, 1100px);
+
+        padding: 90px 0;
+    }
+
+    .playlist-option {
+        min-height: 300px;
+
+        padding: 27px;
+    }
+
+    .original-tracks-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mood-playlist-panel {
+        padding: 20px;
+    }
+
+    .future-section {
+        min-height: 520px;
+    }
+
+    .future-modes {
+        flex-wrap: wrap;
+
+        justify-content: center;
+    }
+
+    .footer {
+        width: min(100% - 30px, 1100px);
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .silk-layer {
+        width: 130vw;
+    }
+
+    .orbit-one {
+        width: 450px;
+        height: 450px;
+    }
+
+    .orbit-two {
+        width: 600px;
+        height: 600px;
+    }
+
+    .mini-player {
+        top: auto;
+        left: 20px;
+        right: 20px;
+
+        bottom: 16px;
+
+        transform: translateY(120%);
+
+        width: auto;
+    }
+
+    .mini-player.visible {
+        transform: translateY(0);
+    }
+
+    /*
+        On narrow screens the mini player sits at the bottom
+        again, so reserve space for it there so it never
+        covers footer text or playlist notes.
+    */
+
+    body.player-active {
+        padding-bottom: 96px;
+    }
+}
+
+
+/* =========================================================
+   32. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* =========================================================
+   24E. LAYOUT v2 — VIDEO = LEFT HALF, TWO LISTS = RIGHT HALF
+        + SONG-ROW TEXT FIX + SELF-HEALING STATES
+   (kept at the END of the file so it overrides 24 / 24D)
+   ========================================================= */
+
+/* ---- Song rows: title ABOVE artist, never glued together ---- */
+
+.song-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    flex: 1;
+    min-width: 0;
+}
+
+.song-title,
+.song-artist {
+    display: block;
+
+    min-width: 0;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.song-title {
+    font-size: 0.82rem;
+    line-height: 1.35;
+}
+
+.song-artist {
+    margin-top: 0;
+
+    color: var(--text-faint);
+    font-size: 0.66rem;
+}
+
+/* A song being swapped for another version of itself. */
+
+.song-item.finding-alt {
+    opacity: 0.6;
+
+    animation: findingAlt 1.1s ease-in-out infinite;
+}
+
+.song-item.finding-alt .song-title::after {
+    content: "  · finding another version…";
+
+    color: var(--lavender);
+
+    font-size: 0.63rem;
+    font-style: italic;
+}
+
+@keyframes findingAlt {
+    0%, 100% { opacity: 0.45; }
+    50%      { opacity: 0.85; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .song-item.finding-alt { animation: none; }
+}
+
+/* (Desktop layout = the compact three boxes side by side from 24D.) */
+
+
+/* =========================================================
+   24F. PLAYER CARD — VINYL + LIVE EQUALIZER
+   ========================================================= */
+
+.player-placeholder {
+    --bass: 0;
+
+    position: relative;
+}
+
+.player-vinyl {
+    position: relative;
+
+    width: 152px;
+    height: 152px;
+
+    display: grid;
+    place-items: center;
+
+    flex-shrink: 0;
+}
+
+/* Soft glow behind the record that swells with the bass. */
+
+.player-vinyl::before {
+    content: "";
+
+    position: absolute;
+    inset: -20px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(217, 169, 189, 0.5),
+            rgba(185, 172, 212, 0.32) 45%,
+            transparent 70%
+        );
+
+    opacity: 0;
+
+    transform: scale(calc(0.92 + var(--bass) * 0.3));
+
+    transition: opacity 500ms ease;
+}
+
+.player-placeholder.playing .player-vinyl::before {
+    opacity: 1;
+}
+
+.player-vinyl-disc {
+    position: absolute;
+    inset: 0;
+
+    border-radius: 50%;
+
+    background:
+        /* light catching the grooves */
+        conic-gradient(
+            from 30deg,
+            rgba(var(--glass), calc(0 * var(--glass-k))) 0deg,
+            rgba(var(--glass), calc(0.22 * var(--glass-k))) 38deg,
+            rgba(var(--glass), calc(0 * var(--glass-k))) 90deg,
+            rgba(var(--glass), calc(0 * var(--glass-k))) 180deg,
+            rgba(var(--glass), calc(0.18 * var(--glass-k))) 218deg,
+            rgba(var(--glass), calc(0 * var(--glass-k))) 270deg
+        ),
+        /* the grooves */
+        repeating-radial-gradient(
+            circle at center,
+            rgba(var(--glass), calc(0.05 * var(--glass-k))) 0,
+            rgba(var(--glass), calc(0.05 * var(--glass-k))) 1px,
+            transparent 1px,
+            transparent 4px
+        ),
+        radial-gradient(circle at 50% 50%, #5d5675 0%, #4a4460 60%, #3d384f 100%);
+
+    box-shadow:
+        0 24px 50px rgba(61, 56, 79, 0.32),
+        inset 0 0 0 5px rgba(var(--glass), calc(0.06 * var(--glass-k)));
+}
+
+.player-placeholder.playing .player-vinyl-disc {
+    animation: vinylSpin 5s linear infinite;
+}
+
+.player-placeholder.paused .player-vinyl-disc {
+    animation-play-state: paused;
+}
+
+@keyframes vinylSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* The label in the middle of the record. */
+
+.player-vinyl .player-symbol {
+    position: relative;
+
+    width: 60px;
+    height: 60px;
+
+    font-size: 1.4rem;
+
+    color: var(--text-main);
+
+    border: 2px solid rgba(var(--glass), calc(0.55 * var(--glass-k)));
+
+    box-shadow: 0 6px 18px rgba(30, 26, 44, 0.3);
+}
+
+.player-placeholder.playing .player-vinyl .player-symbol {
+    animation: none;
+}
+
+.player-vinyl + p {
+    margin-top: 26px;
+
+    font-size: 1.35rem;
+}
+
+/* Equalizer — fades in only while a sample song is playing. */
+
+.sample-visualizer {
+    display: block;
+
+    width: min(400px, 86%);
+    height: 96px;
+
+    margin-top: 14px;
+
+    opacity: 0;
+
+    transition: opacity 500ms ease;
+
+    pointer-events: none;
+}
+
+.player-placeholder.playing .sample-visualizer {
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .player-placeholder.playing .player-vinyl-disc {
+        animation: none;
+    }
+
+}
+
+
+/* =========================================================
+   24G. "SCROLL DOWN" CUE UNDER THE MOOD RESULT
+   ========================================================= */
+
+.emotion-section {
+    position: relative;
+}
+
+.scroll-cue {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    margin: 34px auto 0;
+    padding: 6px 14px;
+
+    background: transparent;
+
+    color: var(--text-soft);
+
+    opacity: 0;
+    transform: translateY(-8px);
+
+    pointer-events: none;
+
+    transition:
+        opacity 700ms ease,
+        transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scroll-cue.visible {
+    opacity: 1;
+    transform: translateY(0);
+
+    pointer-events: auto;
+}
+
+.scroll-cue-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.scroll-cue-arrow {
+    width: 40px;
+    height: 40px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: rgba(var(--glass), calc(0.55 * var(--glass-k)));
+    border: 1px solid rgba(var(--glass), calc(0.8 * var(--glass-k)));
+
+    box-shadow: 0 10px 26px rgba(74, 68, 93, 0.14);
+
+    animation: scrollCueBounce 1.8s ease-in-out infinite;
+
+    transition: background 250ms ease;
+}
+
+.scroll-cue:hover .scroll-cue-arrow {
+    background: rgba(var(--glass), calc(0.85 * var(--glass-k)));
+}
+
+@keyframes scrollCueBounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(7px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scroll-cue-arrow { animation: none; }
+}
+
+
+/* =========================================================
+   24H. BOX PROPORTIONS:  |   wide player   |-|  list  |
+   (player ~60% of the width, the one visible list the rest)
+   ========================================================= */
+
+@media (min-width: 1280px) {
+
+    .music-stage {
+        grid-template-columns:
+            minmax(0, 1.6fr)
+            minmax(0, 1fr);
+
+        gap: 22px;
+    }
+
+}
+
+/* Mid-size screens: player on top, the list below it. */
+
+@media (min-width: 901px) and (max-width: 1279px) {
+
+    .music-stage {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stage-player {
+        grid-column: 1 / -1;
+
+        min-height: 420px;
+    }
+
+}
+
+/* Narrow list boxes: let a long title use two lines instead of "…" at once. */
+
+.playlist-panel .song-title {
+    display: -webkit-box;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;    
+
+    white-space: normal;
+
+    line-height: 1.3;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
+}
+
+.playlist-panel .song-item {
+    padding: 13px 8px;
+}
+
+/* Waveform canvas (image-2 style): a little larger, no glow ring gap. */
+
+.sample-visualizer {
+    width: min(440px, 88%);
+    height: 84px;
+
+    margin-top: 22px;
+}
+
+.player-vinyl {
+    width: 168px;
+    height: 168px;
+}
+
+
+/* =========================================================
+   24I. SPECTRUM ANALYZER CANVAS
+   ========================================================= */
+
+.sample-visualizer {
+    width: min(480px, 92%);
+    height: 104px;
+
+    margin-top: 20px;
+}
+
+
+/* =========================================================
+   33. DARK THEME  ("nocturne")
+   =========================================================
+   Not grey-on-grey. A deep violet-black, lit by saturated lilac,
+   rose and indigo light, with thin gradient "rim light" edges on
+   the glass cards. Everything is driven by the tokens below; the
+   ◐ button in the dock adds .dark-theme to <body>.
+   ========================================================= */
+
+body.dark-theme {
+    color-scheme: dark;
+
+    --bg-main: #0a0714;
+    --bg-soft: #100b20;
+
+    --surface: rgba(190, 165, 255, 0.07);
+    --surface-strong: rgba(190, 165, 255, 0.13);
+
+    --pink: #f2a6d6;
+    --pink-soft: #5f3556;
+
+    --blue: #86c1ff;
+    --blue-soft: #2b4a75;
+
+    --lavender: #b89cff;
+    --lavender-soft: #43357a;
+
+    --mint: #8fe3d0;
+    --mint-soft: #22483f;
+
+    --text-main: #f6f2ff;
+    --text-soft: #d0c8ec;
+    --text-faint: #9b91bf;
+
+    --border: rgba(186, 160, 255, 0.20);
+
+    --shadow-soft:
+        0 24px 80px rgba(0, 0, 0, 0.62),
+        0 0 70px rgba(140, 92, 255, 0.10);
+
+    --shadow-hover:
+        0 34px 110px rgba(0, 0, 0, 0.72),
+        0 0 96px rgba(150, 104, 255, 0.20);
+
+    /* glass is tinted LILAC, not grey, so every panel carries a hint of colour */
+    --glass: 198, 174, 255;
+    --glass-k: 0.09;
+
+    --viz-rgb: 222, 204, 255;
+
+    --dust-a: 196, 165, 255;
+    --dust-b: 255, 168, 218;
+    --dust-c: 140, 196, 255;
+    --dust-core: 255, 248, 255;
+
+    --chip-active-bg: linear-gradient(120deg, #c9a8ff, #f5a8d8, #8dc3ff);
+    --chip-active-text: #1a1030;
+
+    --dock-bg: rgba(22, 15, 44, 0.90);
+}
+
+/* Smooth cross-fade when switching (only while the class is toggling). */
+
+body.theme-transition,
+body.theme-transition * {
+    transition:
+        background-color 450ms ease,
+        color 450ms ease,
+        border-color 450ms ease !important;
+}
+
+/* ---- the sky: moonlight from above, three pools of coloured light ---- */
+
+body.dark-theme .ambient-background {
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(196, 168, 255, 0.17),
+            transparent 44%
+        ),
+        radial-gradient(
+            circle at 12% 18%,
+            rgba(140, 92, 255, 0.21),
+            transparent 36%
+        ),
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(244, 122, 196, 0.12),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 78% 86%,
+            rgba(92, 122, 255, 0.18),
+            transparent 40%
+        ),
+        radial-gradient(
+            circle at 14% 88%,
+            rgba(172, 142, 255, 0.10),
+            transparent 34%
+        ),
+        var(--bg-main);
+}
+
+body.dark-theme .aurora {
+    opacity: 0.21;
+}
+
+body.dark-theme .aurora-one {
+    background: rgba(150, 96, 255, 0.62);
+}
+
+body.dark-theme .aurora-two {
+    background: rgba(86, 138, 255, 0.52);
+}
+
+body.dark-theme .aurora-three {
+    background: rgba(240, 112, 190, 0.46);
+}
+
+/* the "silk" ribbons become slow curtains of coloured light */
+
+body.dark-theme .silk-layer {
+    opacity: 0.10;
+}
+
+body.dark-theme .silk-one {
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(196, 160, 255, 0.70),
+            rgba(255, 170, 222, 0.30),
+            transparent
+        );
+}
+
+body.dark-theme .silk-two {
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(140, 190, 255, 0.62),
+            rgba(176, 144, 255, 0.30),
+            transparent
+        );
+}
+
+/* ---- glass cards with a thin gradient "rim light" ------------------- */
+
+body.dark-theme .mood-card,
+body.dark-theme .emotion-card,
+body.dark-theme .playlist-option,
+body.dark-theme .playlist-panel,
+body.dark-theme .player-placeholder,
+body.dark-theme .step-card,
+body.dark-theme .original-track-card,
+body.dark-theme .mood-playlist-panel {
+    border: 1px solid transparent;
+
+    background:
+        linear-gradient(
+            152deg,
+            rgba(36, 26, 72, 0.56),
+            rgba(12, 8, 28, 0.66)
+        ) padding-box,
+        linear-gradient(
+            140deg,
+            rgba(200, 168, 255, 0.70),
+            rgba(255, 160, 218, 0.24) 46%,
+            rgba(120, 172, 255, 0.50)
+        ) border-box;
+}
+
+body.dark-theme .youtube-player-wrap {
+    box-shadow:
+        0 0 0 1px rgba(196, 165, 255, 0.28),
+        0 0 70px rgba(140, 92, 255, 0.16);
+}
+
+body.dark-theme .playlist-option::before {
+    background:
+        radial-gradient(
+            circle,
+            rgba(184, 156, 255, 0.15),
+            transparent 70%
+        );
+}
+
+body.dark-theme .playlist-option.recommended {
+    background:
+        linear-gradient(
+            152deg,
+            rgba(74, 44, 130, 0.62),
+            rgba(30, 14, 56, 0.66)
+        ) padding-box,
+        linear-gradient(
+            140deg,
+            rgba(215, 178, 255, 0.85),
+            rgba(255, 150, 214, 0.40) 46%,
+            rgba(130, 180, 255, 0.65)
+        ) border-box;
+}
+
+/* ---- headline accent words glow ------------------------------------- */
+
+body.dark-theme .entry-title span,
+body.dark-theme .hero-title span,
+body.dark-theme .section-heading h2 span,
+body.dark-theme .music-heading h2 span,
+body.dark-theme .future-section h2 span {
+    filter: drop-shadow(0 0 22px rgba(170, 120, 255, 0.42));
+}
+
+/* ---- buttons: a lilac glow under the pastel gradient ----------------- */
+
+body.dark-theme .primary-button {
+    box-shadow:
+        0 12px 40px rgba(150, 104, 255, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* ---- floating mini player ------------------------------------------- */
+
+body.dark-theme .mini-player {
+    background: rgba(22, 15, 44, 0.88);
+
+    border-color: rgba(196, 165, 255, 0.26);
+
+    box-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.6),
+        0 0 40px rgba(140, 92, 255, 0.18);
+}
+
+body.dark-theme .mini-player-toggle {
+    color: var(--text-main);
+}
+
+/* ---- vinyl: a black record with a bright rim ------------------------- */
+
+body.dark-theme .player-vinyl-disc {
+    background:
+        conic-gradient(
+            from 30deg,
+            rgba(255, 255, 255, 0) 0deg,
+            rgba(214, 190, 255, 0.24) 38deg,
+            rgba(255, 255, 255, 0) 90deg,
+            rgba(255, 255, 255, 0) 180deg,
+            rgba(255, 170, 222, 0.16) 218deg,
+            rgba(255, 255, 255, 0) 270deg
+        ),
+        repeating-radial-gradient(
+            circle at center,
+            rgba(255, 255, 255, 0.055) 0,
+            rgba(255, 255, 255, 0.055) 1px,
+            transparent 1px,
+            transparent 4px
+        ),
+        radial-gradient(circle at 50% 50%, #2a2148 0%, #191233 62%, #100b24 100%);
+
+    box-shadow:
+        0 0 0 1px rgba(200, 170, 255, 0.30),
+        0 24px 60px rgba(0, 0, 0, 0.7),
+        0 0 60px rgba(140, 92, 255, 0.18),
+        inset 0 0 0 5px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-theme .player-vinyl .player-symbol {
+    color: #2a2044;
+}
+
+/* ---- highlights ------------------------------------------------------- */
+
+body.dark-theme .song-item.playing,
+body.dark-theme .original-track-card.playing {
+    background:
+        linear-gradient(
+            120deg,
+            rgba(184, 156, 255, 0.26),
+            rgba(242, 166, 214, 0.18)
+        );
+}
+
+/* Scrollbars follow the theme. */
+
+body.dark-theme {
+    scrollbar-color: rgba(184, 156, 255, 0.40) transparent;
+}
+
+
+/* =========================================================
+   34. NAV BUTTONS + REDUCED EFFECTS
+   =========================================================
+   The glass blur, aurora, silk and particle layers are pretty
+   but heavy: on a slower laptop they can drop the page to a few
+   frames per second. The ✦ button (navbar) switches them off;
+   the choice is remembered.
+   ========================================================= */
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon-button[aria-pressed="true"] {
+    background: var(--surface-strong);
+
+    border-color: var(--lavender);
+}
+
+body.reduce-effects,
+body.reduce-effects * ,
+body.reduce-effects *::before,
+body.reduce-effects *::after {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.reduce-effects .aurora,
+body.reduce-effects .silk-layer,
+body.reduce-effects .hero-orbit,
+body.reduce-effects .floating-note,
+body.reduce-effects .cursor-glow {
+    display: none !important;
+}
+
+/* Without the blur behind them, glass panels need a little more body. */
+
+body.reduce-effects {
+    --glass-k: 1.35;
+}
+
+body.dark-theme.reduce-effects {
+    --glass-k: 0.20;
+}
+
+
+/* The entry music is a picture-less <video> (see index.html). Keep it invisible. */
+
+.entry-music {
+    position: fixed;
+
+    left: -9999px;
+    top: 0;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   35. "FINDING ANOTHER VERSION" STATE OF THE PLAYER CARD
+   ========================================================= */
+
+.player-placeholder.searching .player-vinyl-disc {
+    animation: vinylSpin 2.6s linear infinite;
+}
+
+.player-placeholder.searching .player-vinyl::before {
+    opacity: 1;
+
+    animation: searchGlow 1.6s ease-in-out infinite alternate;
+}
+
+.player-placeholder.searching #player-placeholder-subtitle {
+    animation: searchText 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes searchGlow {
+    from { transform: scale(0.94); }
+    to   { transform: scale(1.14); }
+}
+
+@keyframes searchText {
+    from { opacity: 0.45; }
+    to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .player-placeholder.searching .player-vinyl-disc,
+    .player-placeholder.searching .player-vinyl::before,
+    .player-placeholder.searching #player-placeholder-subtitle {
+        animation: none;
+    }
+
+}
+
+
+/* =========================================================
+   36. SETTINGS DOCK  (theme + effects, bottom-right, always visible)
+   =========================================================
+   z-index 150: above the entry screen (100), below the entry
+   animation (200) and the mini-player (250) — and in the opposite
+   corner from the mini-player, so the two can never overlap.
+   ========================================================= */
+
+:root {
+    --dock-bg: rgba(255, 255, 255, 0.78);
+}
+
+.settings-dock {
+    position: fixed;
+
+    right: 22px;
+    bottom: 22px;
+
+    z-index: 150;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+/* On the entry screen, sit above its bottom music pill. */
+body:not(.entered) .settings-dock {
+    bottom: 88px;
+}
+
+.dock-button {
+    display: flex;
+    align-items: center;
+
+    height: 46px;
+
+    padding: 0 12px;
+
+    border-radius: 999px;
+
+    color: var(--text-main);
+
+    background: var(--dock-bg);
+
+    border: 1px solid var(--border);
+
+    box-shadow: var(--shadow-soft);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    font-size: 0.76rem;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        transform 250ms ease,
+        border-color 250ms ease,
+        background 250ms ease;
+}
+
+.dock-icon {
+    display: grid;
+    place-items: center;
+
+    width: 22px;
+    height: 22px;
+
+    flex-shrink: 0;
+}
+
+/* The text label slides open on hover / focus, and during the first-visit hint. */
+
+.dock-label {
+    max-width: 0;
+
+    margin-left: 0;
+
+    overflow: hidden;
+
+    opacity: 0;
+
+    transition:
+        max-width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+        margin-left 350ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 250ms ease;
+}
+
+.dock-button:hover .dock-label,
+.dock-button:focus-visible .dock-label,
+.settings-dock.hint .dock-label {
+    max-width: 140px;
+
+    margin-left: 9px;
+
+    opacity: 1;
+}
+
+.dock-button:hover {
+    transform: translateY(-2px);
+
+    border-color: var(--lavender);
+}
+
+.dock-button:focus-visible {
+    outline: 2px solid var(--lavender);
+    outline-offset: 3px;
+}
+
+.dock-button[aria-pressed="true"] {
+    border-color: var(--lavender);
+}
+
+/* The dock stays out of the way while the entry animation plays. */
+.portal-transition.active ~ .settings-dock {
+    visibility: hidden;
+}
+
+/* Phones: the mini-player moves to the BOTTOM, so the dock goes to the top corner. */
+
+@media (max-width: 600px) {
+
+    .settings-dock,
+    body:not(.entered) .settings-dock {
+        top: 14px;
+        right: 14px;
+        bottom: auto;
+    }
+
+}
+
+/* The navbar keeps a same-sized empty slot so its links stay centred. */
+
+.nav-actions {
+    min-width: 96px;
+}
+
+
+/* =========================================================
+   37. FAIRY DUST CANVAS
+   ========================================================= */
+
+.dust-canvas {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+}
+
+body.reduce-effects .dust-canvas {
+    display: none;
+}
+
+
+/* =========================================================
+   38. LANGUAGE PICKER  (inside the mood card)
+   ========================================================= */
+
+:root {
+    --chip-active-bg: linear-gradient(120deg, #f0c9dc, #d9cdf3, #c5e4ee);
+    --chip-active-text: #34303f;
+}
+
+.language-picker {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+
+    margin-top: 18px;
+}
+
+.language-picker-label {
+    color: var(--text-faint);
+
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.language-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.language-chip {
+    padding: 8px 16px;
+
+    border-radius: 50px;
+
+    background: rgba(var(--glass), calc(0.42 * var(--glass-k)));
+
+    border: 1px solid rgba(var(--glass), calc(0.6 * var(--glass-k)));
+
+    color: var(--text-soft);
+
+    font-size: 0.74rem;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background 250ms ease,
+        color 250ms ease,
+        border-color 250ms ease,
+        transform 250ms ease,
+        box-shadow 250ms ease;
+}
+
+.language-chip:hover {
+    transform: translateY(-2px);
+
+    border-color: var(--lavender);
+}
+
+.language-chip:focus-visible {
+    outline: 2px solid var(--lavender);
+    outline-offset: 3px;
+}
+
+.language-chip.active {
+    background: var(--chip-active-bg);
+
+    border-color: transparent;
+
+    color: var(--chip-active-text);
+
+    box-shadow: 0 6px 18px rgba(185, 172, 212, 0.35);
+}
+
+/* one line of plain-language explanation under the chips */
+
+.language-hint {
+    flex-basis: 100%;
+
+    color: var(--text-faint);
+
+    font-size: 0.72rem;
+
+    min-height: 1.1em;
+}
+
+@media (max-width: 600px) {
+
+    .language-picker-label {
+        flex-basis: 100%;
+    }
+
+}
+
+
+/* =========================================================
+   39. POLISH: clipped italic letters, dark-mode Enter halo
+   ========================================================= */
+
+/*
+    The accent words are italic and painted with background-clip: text.
+    An italic glyph leans past the end of its own box, so the last
+    letter ("e" in AIMuse) was being cut off. A little right padding
+    (cancelled by the negative margin, so the layout doesn't move)
+    gives the gradient room to cover the whole letter.
+*/
+
+.entry-title span,
+.hero-title span,
+.section-heading h2 span,
+.music-heading h2 span,
+.future-section h2 span {
+    padding-right: 0.16em;
+    margin-right: -0.16em;
+}
+
+/* In the dark theme the halo behind ENTER is lilac light, not grey fog. */
+
+body.dark-theme .portal-glow {
+    background:
+        radial-gradient(
+            circle,
+            rgba(214, 190, 255, 0.55),
+            rgba(150, 100, 255, 0.20) 45%,
+            transparent 72%
+        );
+}

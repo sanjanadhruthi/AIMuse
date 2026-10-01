@@ -1,0 +1,517 @@
+/* =========================================================
+   AIMuse — INTERACTION EFFECTS
+   =========================================================
+   Loaded AFTER style.css. Everything here reacts to the
+   person: the pointer, hovering, scrolling, new results.
+
+     E1. Moonlight cursor ring
+     E2. Confidence count-up      (styles live in style.css)
+     E3. Spotlight glow + tilt
+     E4. Staggered float-ins
+     E5. Self-drawing timeline    ("How AIMuse hears you")
+     E6. Switched off: touch screens, reduced motion,
+         and the "Reduce effects" button
+
+   effects.js adds the classes / CSS variables used here.
+   ========================================================= */
+
+
+/* =========================================================
+   E1. MOONLIGHT CURSOR RING
+   ========================================================= */
+
+.cursor-ring,
+.cursor-dot {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    z-index: 9999;
+
+    pointer-events: none;
+
+    border-radius: 50%;
+
+    opacity: 0;
+
+    transition: opacity 300ms ease;
+
+    will-change: transform;
+}
+
+.cursor-ring {
+    width: 34px;
+    height: 34px;
+
+    margin: -17px 0 0 -17px;
+
+    border: 1.5px solid rgba(167, 148, 227, 0.75);
+
+    box-shadow:
+        0 0 14px rgba(167, 148, 227, 0.35),
+        inset 0 0 10px rgba(243, 201, 220, 0.35);
+}
+
+/* the ring's size lives on an inner layer, so the JS can own
+   the outer transform (position) and CSS can own the scale */
+.cursor-ring::before {
+    content: "";
+
+    position: absolute;
+    inset: -1.5px;
+
+    border-radius: inherit;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(243, 201, 220, 0.0),
+            rgba(195, 222, 240, 0.0)
+        );
+
+    transition:
+        transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
+        background 350ms ease;
+}
+
+.cursor-dot {
+    width: 6px;
+    height: 6px;
+
+    margin: -3px 0 0 -3px;
+
+    background: var(--lavender);
+
+    box-shadow: 0 0 10px var(--lavender);
+}
+
+body.has-cursor-ring .cursor-ring,
+body.has-cursor-ring .cursor-dot {
+    opacity: 1;
+}
+
+body.cursor-away .cursor-ring,
+body.cursor-away .cursor-dot {
+    opacity: 0;
+}
+
+/* over something clickable: the ring swells into a soft moon */
+.cursor-ring.is-hover {
+    width: 58px;
+    height: 58px;
+
+    margin: -29px 0 0 -29px;
+
+    border-color: rgba(242, 166, 214, 0.8);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(243, 201, 220, 0.28),
+            rgba(195, 222, 240, 0.12) 70%,
+            transparent
+        );
+}
+
+.cursor-ring.is-text {
+    width: 6px;
+    height: 30px;
+
+    margin: -15px 0 0 -3px;
+
+    border-radius: 4px;
+}
+
+.cursor-ring.is-down {
+    width: 26px;
+    height: 26px;
+
+    margin: -13px 0 0 -13px;
+}
+
+.cursor-ring {
+    transition:
+        opacity 300ms ease,
+        width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+        height 350ms cubic-bezier(0.22, 1, 0.36, 1),
+        margin 350ms cubic-bezier(0.22, 1, 0.36, 1),
+        border-radius 350ms ease,
+        border-color 350ms ease,
+        background 350ms ease;
+}
+
+.cursor-dot.is-hover {
+    opacity: 0 !important;
+}
+
+body.dark-theme .cursor-ring {
+    border-color: rgba(184, 156, 255, 0.85);
+
+    box-shadow:
+        0 0 18px rgba(184, 156, 255, 0.45),
+        inset 0 0 12px rgba(242, 166, 214, 0.25);
+}
+
+
+/* =========================================================
+   E3. SPOTLIGHT GLOW (follows the pointer) + TILT
+   =========================================================
+   effects.js sets --gx / --gy (pointer position inside the
+   element, in %). A soft pastel light sits under the pointer
+   and the border lights up.
+   ========================================================= */
+
+.glow-surface {
+    position: relative;
+
+    isolation: isolate;
+}
+
+.glow-surface::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    z-index: -1;
+
+    border-radius: inherit;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    background:
+        radial-gradient(
+            260px circle at var(--gx, 50%) var(--gy, 50%),
+            rgba(243, 201, 220, 0.45),
+            rgba(195, 222, 240, 0.22) 45%,
+            transparent 75%
+        );
+
+    transition: opacity 350ms ease;
+}
+
+.glow-surface.is-lit::after {
+    opacity: 1;
+}
+
+.glow-surface.is-lit {
+    box-shadow:
+        var(--shadow-hover),
+        0 0 0 1px rgba(167, 148, 227, 0.35),
+        0 0 34px rgba(167, 148, 227, 0.22);
+}
+
+/* small rows (songs) get a smaller, subtler light */
+.song-item.glow-surface::after {
+    background:
+        radial-gradient(
+            140px circle at var(--gx, 50%) var(--gy, 50%),
+            rgba(243, 201, 220, 0.38),
+            transparent 70%
+        );
+}
+
+.song-item.glow-surface.is-lit {
+    box-shadow: none;
+}
+
+body.dark-theme .glow-surface::after {
+    background:
+        radial-gradient(
+            260px circle at var(--gx, 50%) var(--gy, 50%),
+            rgba(184, 156, 255, 0.24),
+            rgba(134, 193, 255, 0.10) 45%,
+            transparent 75%
+        );
+}
+
+/* cards that tilt need their own smooth transform */
+.fx-tilt {
+    transition:
+        transform 450ms cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 350ms ease;
+
+    transform-style: preserve-3d;
+
+    will-change: transform;
+}
+
+
+/* =========================================================
+   E4. STAGGERED FLOAT-INS
+   =========================================================
+   --i = position in the group; each item waits a little
+   longer than the one before it. "backwards" means the
+   animation leaves no styles behind once it's done, so
+   hover effects keep working normally afterwards.
+   ========================================================= */
+
+.fx-float-in {
+    animation:
+        fxFloatIn 700ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+
+    animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+@keyframes fxFloatIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.98);
+        filter: blur(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+        filter: none;
+    }
+}
+
+/* scroll reveals: hidden until they enter the screen */
+.fx-reveal {
+    opacity: 0;
+
+    transform: translateY(28px);
+
+    transition:
+        opacity 800ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+
+    transition-delay: calc(var(--i, 0) * 90ms);
+}
+
+.fx-reveal.is-visible {
+    opacity: 1;
+
+    transform: none;
+}
+
+
+/* =========================================================
+   E5. SELF-DRAWING TIMELINE — "How AIMuse hears you"
+   ========================================================= */
+
+.steps-container.timeline {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 46px;
+
+    max-width: 980px;
+
+    margin: 0 auto;
+
+    padding: 20px 0;
+}
+
+/* the faint rail and the glowing line that grows over it */
+.timeline-track {
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+    left: 50%;
+
+    width: 2px;
+
+    margin-left: -1px;
+
+    border-radius: 2px;
+
+    background: rgba(167, 148, 227, 0.16);
+
+    overflow: hidden;
+}
+
+.timeline-fill {
+    width: 100%;
+    height: 100%;
+
+    transform-origin: top center;
+    transform: scaleY(var(--progress, 0));
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--pink),
+            var(--lavender) 50%,
+            var(--blue)
+        );
+
+    box-shadow: 0 0 14px var(--lavender);
+}
+
+.timeline-step {
+    position: relative;
+
+    width: 50%;
+
+    padding-right: 56px;
+
+    align-self: flex-start;
+
+    opacity: 0;
+
+    transform: translateX(-46px);
+
+    transition:
+        opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.timeline-step.is-right {
+    align-self: flex-end;
+
+    padding-right: 0;
+    padding-left: 56px;
+
+    transform: translateX(46px);
+}
+
+.timeline-step.is-lit {
+    opacity: 1;
+
+    transform: none;
+}
+
+/* the dot that sits on the line */
+.timeline-node {
+    position: absolute;
+
+    top: 34px;
+    right: -9px;
+
+    width: 18px;
+    height: 18px;
+
+    border-radius: 50%;
+
+    background: var(--bg-main, #fff);
+
+    border: 2px solid rgba(167, 148, 227, 0.35);
+
+    transition:
+        border-color 500ms ease,
+        box-shadow 500ms ease,
+        background 500ms ease;
+}
+
+.timeline-step.is-right .timeline-node {
+    right: auto;
+    left: -9px;
+}
+
+.timeline-step.is-lit .timeline-node {
+    border-color: var(--lavender);
+
+    background: var(--lavender);
+
+    box-shadow:
+        0 0 0 6px rgba(167, 148, 227, 0.18),
+        0 0 22px var(--lavender);
+}
+
+.timeline-step .step-card {
+    min-height: 0;
+}
+
+.timeline-step .step-tag {
+    display: inline-block;
+
+    margin-top: 16px;
+
+    padding: 4px 10px;
+
+    border-radius: 999px;
+
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+
+    color: var(--text-soft);
+
+    background: rgba(167, 148, 227, 0.14);
+}
+
+/* phones / narrow screens: line on the left, all cards right */
+@media (max-width: 760px) {
+
+    .timeline-track {
+        left: 18px;
+    }
+
+    .timeline-step,
+    .timeline-step.is-right {
+        width: 100%;
+
+        align-self: stretch;
+
+        padding: 0 0 0 48px;
+
+        transform: translateY(30px);
+    }
+
+    .timeline-step .timeline-node,
+    .timeline-step.is-right .timeline-node {
+        left: 9px;
+        right: auto;
+    }
+
+}
+
+
+/* =========================================================
+   E6. SWITCHED OFF
+   =========================================================
+   Touch screens never get the cursor ring (effects.js does
+   not create it). Reduced motion / "Reduce effects": every
+   element is simply shown, nothing moves.
+   ========================================================= */
+
+body.reduce-effects .cursor-ring,
+body.reduce-effects .cursor-dot {
+    display: none;
+}
+
+body.reduce-effects .fx-float-in {
+    animation: none;
+}
+
+body.reduce-effects .fx-reveal,
+body.reduce-effects .timeline-step {
+    opacity: 1;
+    transform: none;
+}
+
+body.reduce-effects .timeline-fill {
+    transform: none;
+}
+
+body.reduce-effects .timeline-node {
+    border-color: var(--lavender);
+    background: var(--lavender);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .fx-float-in {
+        animation: none;
+    }
+
+    .fx-reveal,
+    .timeline-step {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .timeline-fill {
+        transform: none;
+    }
+
+}
