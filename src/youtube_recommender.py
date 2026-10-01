@@ -151,6 +151,10 @@ class _QuotaExceeded(Exception):
     pass
 
 
+class _RateLimited(_QuotaExceeded):
+    """HTTP 429 — YouTube wants fewer searches per minute."""
+
+
 # =========================================================
 # 02. LANGUAGES
 # =========================================================
@@ -865,6 +869,12 @@ def _api_get(url, params):
                for r in reasons):
             raise _QuotaExceeded()
 
+    # 429 = "slow down": too many searches in a short time. Callers
+    # that already handle quota problems treat it the same way;
+    # warm-samples waits and tries again.
+    if response.status_code == 429:
+        raise _RateLimited()
+
     response.raise_for_status()
 
     return response.json()
@@ -1321,7 +1331,8 @@ def _search_language(query, language, pool_size=CANDIDATES_PER_LANGUAGE,
     except _QuotaExceeded:
         raise
 
-    except (requests.RequestException, ValueError):
+    except (requests.RequestException, ValueError) as error:
+        _remember_error(error)
         return None   # None = "network problem", [] = "no results"
 
     return [
@@ -1329,6 +1340,32 @@ def _search_language(query, language, pool_size=CANDIDATES_PER_LANGUAGE,
         for item in data.get("items", [])
         if item.get("id", {}).get("videoId")
     ]
+
+
+# The most recent failed request, in plain words — so tools such as
+# `flask --app app warm-samples` can say WHY a search failed.
+LAST_ERROR = {"text": "", "status": None}
+
+
+def _remember_error(error):
+
+    response = getattr(error, "response", None)
+    status = getattr(response, "status_code", None)
+
+    text = type(error).__name__
+
+    if response is not None:
+        try:
+            details = response.json().get("error", {})
+            reasons = ", ".join(
+                e.get("reason", "") for e in details.get("errors", []) if e.get("reason")
+            )
+            text = f"HTTP {status}: {details.get('message', '')} ({reasons})".strip()
+        except ValueError:
+            text = f"HTTP {status}"
+
+    LAST_ERROR["text"] = text[:200]
+    LAST_ERROR["status"] = status
 
 
 def _fetch_details(video_ids):

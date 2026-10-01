@@ -1,0 +1,262 @@
+/* =========================================================
+   AIMuse — PHONE LAYOUT
+   =========================================================
+   Loaded LAST (after style.css and effects.css). The desktop
+   design scaled down to a phone looked oversized: huge headings,
+   tall single-column cards, a floating dock covering content, a
+   big player bar. This file makes the phone version feel like it
+   was designed for a phone:
+
+     M1. No blue tap flash (all screens)
+     M2. Settings dock — small, sits in the navbar, scrolls away
+     M3. Mini-player   — slimmer bar at the bottom
+     M4. Rhythm        — tighter sections, calmer heading sizes
+     M5. Cards         — AIMuse originals as a compact 2×2 grid,
+                         lighter timeline / playlist cards
+     M6. Entry screen  — fits the real visible screen height
+   ========================================================= */
+
+
+/* =========================================================
+   M1. NO BLUE TAP FLASH
+   =========================================================
+   Phones paint a blue/grey box on anything tapped (it showed on
+   the ENTER button). Every button here has its own pressed
+   style, so the browser's box isn't needed.
+   ========================================================= */
+
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+@media (max-width: 600px) {
+
+    /* =====================================================
+       M2. SETTINGS DOCK
+       =====================================================
+       Two small round buttons side by side. On the main page
+       they sit in the navbar's right corner and scroll away
+       with it, so they never cover a card or a song.
+       ===================================================== */
+
+    .settings-dock,
+    body:not(.entered) .settings-dock {
+        top: 14px;
+        right: 12px;
+        bottom: auto;
+
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    body.entered .settings-dock {
+        position: absolute;
+        top: 16px;
+    }
+
+    .dock-button {
+        width: 38px;
+        height: 38px;
+
+        padding: 0;
+
+        justify-content: center;
+    }
+
+    .dock-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* icons only — the labels made a wide pill that overlapped */
+    .dock-button .dock-label,
+    .dock-button:hover .dock-label,
+    .dock-button:focus-visible .dock-label,
+    .settings-dock.hint .dock-label {
+        max-width: 0;
+        margin-left: 0;
+        opacity: 0;
+    }
+
+    .dock-button:hover {
+        transform: none;
+    }
+
+
+    /* =====================================================
+       M3. MINI-PLAYER — a slimmer bar
+       ===================================================== */
+
+    .mini-player {
+        left: 12px;
+        right: 12px;
+        bottom: 10px;
+
+        padding: 8px 8px 8px 14px;
+
+        border-radius: 18px;
+    }
+
+    .mini-player-label {
+        font-size: 0.52rem;
+    }
+
+    .mini-player-track {
+        font-size: 0.82rem;
+    }
+
+    .mini-player-toggle {
+        width: 34px;
+        height: 34px;
+    }
+
+    body.player-active {
+        padding-bottom: 76px;
+    }
+
+
+    /* =====================================================
+       M4. RHYTHM — spacing and type
+       ===================================================== */
+
+    .hero-section {
+        padding-top: 44px;
+        padding-bottom: 64px;
+    }
+
+    .hero-title {
+        font-size: clamp(2.5rem, 12.5vw, 3.2rem);
+        line-height: 1.02;
+    }
+
+    .emotion-section,
+    .playlist-section,
+    .music-section,
+    .no-idea-section,
+    .how-section,
+    .future-section {
+        padding: 60px 0;
+    }
+
+    .section-heading {
+        margin-bottom: 34px;
+    }
+
+    .section-heading h2,
+    .music-heading h2,
+    .future-section h2 {
+        font-size: clamp(1.9rem, 9vw, 2.4rem);
+        line-height: 1.08;
+    }
+
+    .section-eyebrow,
+    .subsection-label {
+        font-size: 0.6rem;
+    }
+
+    .future-section {
+        min-height: 0;
+    }
+
+
+    /* =====================================================
+       M5. CARDS
+       ===================================================== */
+
+    /* AIMuse originals: a compact 2×2 grid instead of four
+       tall full-width cards */
+    .original-tracks-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .original-track-card {
+        padding: 14px 13px;
+        gap: 10px;
+
+        border-radius: 18px;
+    }
+
+    .original-track-card .track-card-icon {
+        width: 30px;
+        height: 30px;
+
+        font-size: 0.85rem;
+    }
+
+    .original-track-card .track-card-title {
+        font-size: 0.86rem;
+        line-height: 1.3;
+    }
+
+    .original-track-card .track-card-subtitle {
+        font-size: 0.52rem;
+    }
+
+    /* timeline cards: lighter */
+    .timeline-step .step-card {
+        padding: 22px 20px;
+
+        border-radius: 22px;
+    }
+
+    .timeline-step .step-card h3 {
+        margin-top: 16px;
+
+        font-size: 1.2rem;
+    }
+
+    .timeline-step .step-icon {
+        width: 38px;
+        height: 38px;
+
+        border-radius: 12px;
+
+        font-size: 1rem;
+    }
+
+    .steps-container.timeline {
+        gap: 26px;
+    }
+
+    /* playlist choice cards and panels */
+    .playlist-option {
+        min-height: 0;
+
+        padding: 22px;
+    }
+
+    .playlist-panel,
+    .mood-playlist-panel {
+        padding: 18px 16px;
+    }
+
+    .song-item {
+        padding: 12px 6px;
+    }
+
+    .emotion-card {
+        padding: 26px 18px;
+    }
+
+    .mood-card {
+        padding: 18px;
+    }
+
+
+    /* =====================================================
+       M6. ENTRY SCREEN
+       =====================================================
+       100vh on a phone includes the area under the browser's
+       address bar, so the screen could shift when scrolled.
+       dvh is the height that is actually visible.
+       ===================================================== */
+
+    .entry-screen {
+        min-height: 100dvh;
+
+        overscroll-behavior: none;
+    }
+
+}

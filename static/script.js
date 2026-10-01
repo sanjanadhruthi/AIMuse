@@ -2087,6 +2087,11 @@ function loadSamplePlaylists() {
 
 function refreshSampleUi() {
 
+    // rebuild the tabs now that we know which moods have songs
+    if (typeof buildMoodTabs === "function") {
+        buildMoodTabs();
+    }
+
     if (typeof renderMoodPlaylistPanel === "function") {
         renderMoodPlaylistPanel(activeMoodTab);
     }
@@ -2273,8 +2278,8 @@ function renderSampleStage(mood) {
 
     if (samplePanelNote) {
         samplePanelNote.textContent =
-            "AIMuse's own sample songs, stored on this site. " +
-            "Tell AIMuse how you feel to get a YouTube playlist instead.";
+            "Hand-picked songs for this mood, played from YouTube. " +
+            "Tell AIMuse how you feel for a playlist made just for you.";
     }
 
     return items;
@@ -2539,6 +2544,12 @@ async function fetchRealRecommendations(mode) {
 
 function buildSongItem(song, number, real, onPick = null) {
 
+    // Sample songs now come from YouTube too (they carry a videoId),
+    // so they play in the YouTube player like any AIMuse song.
+    if (!real && song.videoId) {
+        real = true;
+    }
+
     const item = document.createElement("button");
 
     item.type = "button";
@@ -2620,6 +2631,16 @@ function buildSongItem(song, number, real, onPick = null) {
             document.querySelectorAll(".song-item[data-file]")
                 .forEach(el => {
                     if (el !== item && el.dataset.file === song.file) {
+                        el.classList.add("playing");
+                    }
+                });
+        }
+
+        if (song.sample && song.videoId) {
+            document.querySelectorAll(".song-item[data-video-id]")
+                .forEach(el => {
+                    if (el !== item && el._song && el._song.sample &&
+                        el.dataset.videoId === song.videoId) {
                         el.classList.add("playing");
                     }
                 });
@@ -2986,7 +3007,56 @@ function advancePast(item) {
 
 }
 
+/*
+    A hand-picked sample song (beside the player) failed: switch to
+    the next saved upload of the same song — instant, no server call.
+    Returns true if it handled the failure.
+*/
+
+function swapSampleUpload(failedId, permanent) {
+
+    const item = sampleSongList
+        ? sampleSongList.querySelector(`.song-item[data-video-id="${failedId}"]`)
+        : null;
+
+    if (!item || !item._song) return false;
+
+    const song = item._song;
+
+    if (permanent) {
+        reportBadVideo(failedId, song.channel || "");
+    }
+
+    const alternates = (song.alternates || []).filter(
+        alt => alt.videoId && alt.videoId !== failedId
+    );
+
+    const next = alternates.shift();
+
+    if (!next) {
+        markSongUnavailable(failedId);
+        skipToNextSong();
+        return true;
+    }
+
+    const updated = { ...song, ...next, alternates, sample: true };
+
+    // the same song in the mood-tab list follows along
+    document.querySelectorAll(`.song-item[data-video-id="${failedId}"]`)
+        .forEach(el => {
+            el.dataset.videoId = next.videoId;
+            el._song = updated;
+        });
+
+    playYouTubeSong(updated);
+
+    return true;
+
+}
+
 async function replaceFailedSong(failedId, permanent, errorCode) {
+
+    if (swapSampleUpload(failedId, permanent)) return;
 
     const item = songList
         ? songList.querySelector(`.song-item[data-video-id="${failedId}"]`)
@@ -3937,7 +4007,22 @@ function buildMoodTabs() {
 
     moodTabs.innerHTML = "";
 
-    MOOD_ORDER.forEach((mood, index) => {
+    /*
+        Only moods that actually have songs get a tab — while the
+        YouTube sample songs are still being saved, a half-filled
+        set shouldn't show empty tabs. (Before the songs have
+        loaded, every mood is shown as usual.)
+    */
+
+    const moods = samplesLoaded
+        ? MOOD_ORDER.filter(mood => (SAMPLE_PLAYLISTS[mood] || []).length)
+        : MOOD_ORDER;
+
+    if (moods.length && !moods.includes(activeMoodTab)) {
+        activeMoodTab = moods[0];
+    }
+
+    moods.forEach((mood) => {
 
         const tab = document.createElement("button");
 
@@ -3947,7 +4032,7 @@ function buildMoodTabs() {
         tab.dataset.mood = mood;
         tab.setAttribute("role", "tab");
 
-        if (index === 0) {
+        if (mood === activeMoodTab) {
             tab.classList.add("active");
         }
 

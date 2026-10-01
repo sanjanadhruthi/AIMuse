@@ -6,6 +6,7 @@ from flask import Flask, jsonify, request, render_template, url_for
 
 from src.preprocessing import preprocess_text
 from src.sample_names import sample_meta
+from src import curated_samples
 from src.youtube_recommender import (
     get_recommendations,
     find_replacement,
@@ -2674,8 +2675,23 @@ def recommend_replace():
 
 @app.route("/api/samples")
 def api_samples():
+    """
+    Sample songs for the "Explore moods" tabs.
 
-    playlists = scan_sample_songs()
+    Hand-picked songs played from YouTube (data/sample_videos.json,
+    see src/curated_samples.py) — these work on the public website.
+    A mood with no YouTube songs saved yet falls back to local files
+    in static/Moods/<mood>/ (laptop only; they're git-ignored).
+    """
+
+    local = scan_sample_songs()
+
+    youtube = curated_samples.youtube_playlists()
+
+    playlists = {
+        mood: youtube.get(mood) or local.get(mood, [])
+        for mood in CORE_MOODS
+    }
 
     return jsonify({
         "success": True,
@@ -2727,6 +2743,20 @@ def health():
 # =========================================================
 # RUN APPLICATION
 # =========================================================
+
+@app.cli.command("warm-samples")
+def warm_samples_command():
+    """
+    flask --app app warm-samples
+
+    Finds each hand-picked sample song (src/curated_samples.py) on
+    YouTube once — about 100 quota units per song, ~3,500 for all 35 —
+    and saves them to data/sample_videos.json.  Commit that file.
+    Already-saved songs are skipped, so it's safe to run again.
+    """
+
+    curated_samples.warm()
+
 
 @app.cli.command("warm-cache")
 def warm_cache_command():

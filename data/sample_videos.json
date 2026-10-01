@@ -1,0 +1,395 @@
+{
+ "song a|artist": [
+  {
+   "videoId": "aaaaaaaaaa1",
+   "channel": "ch-aaaaaaaaaa1",
+   "duration_seconds": 200,
+   "thumbnail": ""
+  },
+  {
+   "videoId": "aaaaaaaaaa2",
+   "channel": "ch-aaaaaaaaaa2",
+   "duration_seconds": 200,
+   "thumbnail": ""
+  }
+ ],
+ "song c|y": [
+  {
+   "videoId": "cccccccccc1",
+   "channel": "ch-cccccccccc1",
+   "duration_seconds": 200,
+   "thumbnail": ""
+  },
+  {
+   "videoId": "cccccccccc2",
+   "channel": "ch-cccccccccc2",
+   "duration_seconds": 200,
+   "thumbnail": ""
+  }
+ ],
+ "sapphire|ed sheeran": [
+  {
+   "videoId": "JgDNFQ2RaLQ",
+   "channel": "Ed Sheeran",
+   "duration_seconds": 184,
+   "thumbnail": "https://i.ytimg.com/vi/JgDNFQ2RaLQ/mqdefault.jpg"
+  },
+  {
+   "videoId": "PZZRr04Q7zM",
+   "channel": "7clouds",
+   "duration_seconds": 179,
+   "thumbnail": "https://i.ytimg.com/vi/PZZRr04Q7zM/mqdefault.jpg"
+  },
+  {
+   "videoId": "KOh4p_kf454",
+   "channel": "Rap Samurai",
+   "duration_seconds": 180,
+   "thumbnail": "https://i.ytimg.com/vi/KOh4p_kf454/mqdefault.jpg"
+  },
+  {
+   "videoId": "NzWkopFJuSw",
+   "channel": "Ed Sheeran",
+   "duration_seconds": 180,
+   "thumbnail": "https://i.ytimg.com/vi/NzWkopFJuSw/mqdefault.jpg"
+  }
+ ],
+ "love you zindagi|dear zindagi": [
+  {
+   "videoId": "bw7bVpI5VcM",
+   "channel": "Sony Music India",
+   "duration_seconds": 252,
+   "thumbnail": "https://i.ytimg.com/vi/bw7bVpI5VcM/mqdefault.jpg"
+  },
+  {
+   "videoId": "TBGcxvCt5DI",
+   "channel": "Sony Music India",
+   "duration_seconds": 235,
+   "thumbnail": "https://i.ytimg.com/vi/TBGcxvCt5DI/mqdefault.jpg"
+  },
+  {
+   "videoId": "jK5OYokOIVQ",
+   "channel": "LyricALI",
+   "duration_seconds": 228,
+   "thumbnail": "https://i.ytimg.com/vi/jK5OYokOIVQ/mqdefault.jpg"
+  },
+  {
+   "videoId": "2ZBPjt9NQtk",
+   "channel": "Sony Music India",
+   "duration_seconds": 164,
+   "thumbnail": "https://i.ytimg.com/vi/2ZBPjt9NQtk/mqdefault.jpg"
+  }
+ ],
+ "fade|jeff satur": [
+  {
+   "videoId": "NMQoLx1raQU",
+   "channel": "Indolirik",
+   "duration_seconds": 264,
+   "thumbnail": "https://i.ytimg.com/vi/NMQoLx1raQU/mqdefault.jpg"
+  },
+  {
+   "videoId": "9KfeTAoA6uk",
+   "channel": "Jeff Satur - Topic",
+   "duration_seconds": 263,
+   "thumbnail": "https://i.ytimg.com/vi/9KfeTAoA6uk/mqdefault.jpg"
+  },
+  {
+   "videoId": "4wX-0mnMrfU",
+   "channel": "Jeff Satur - Topic",
+   "duration_seconds": 263,
+   "thumbnail": "https://i.ytimg.com/vi/4wX-0mnMrfU/mqdefault.jpg"
+  },
+  {
+   "videoId": "t6Kd0FtqxkM",
+   "channel": "lyricvideo",
+   "duration_seconds": 259,
+   "thumbnail": "https://i.ytimg.com/vi/t6Kd0FtqxkM/mqdefault.jpg"
+  }
+ ],
+ "dreamers|jung kook": [
+  {
+   "videoId": "jEdfjuG0Fx4",
+   "channel": "BANGTANTV",
+   "duration_seconds": 305,
+   "thumbnail": "https://i.ytimg.com/vi/jEdfjuG0Fx4/mqdefault.jpg"
+  },
+  {
+   "videoId": "Jm29kLeWqDA",
+   "channel": "FIFA",
+   "duration_seconds": 124,
+   "thumbnail": "https://i.ytimg.com/vi/Jm29kLeWqDA/mqdefault.jpg"
+  },
+  {
+   "videoId": "lcR8CBCW1bs",
+   "channel": "BANGTANTV",
+   "duration_seconds": 513,
+   "thumbnail": "https://i.ytimg.com/vi/lcR8CBCW1bs/mqdefault.jpg"
+  },
+  {
+   "videoId": "hEq3vHsFYBk",
+   "channel": "Jaeguchi",
+   "duration_seconds": 200,
+   "thumbnail": "https://i.ytimg.com/vi/hEq3vHsFYBk/mqdefault.jpg"
+  }
+ ],
+ "bulleya|ae dil hai mushkil": [
+  {
+   "videoId": "x87BTxPJkCs",
+   "channel": "Sony Music India",
+   "duration_seconds": 348,
+   "thumbnail": "https://i.ytimg.com/vi/x87BTxPJkCs/mqdefault.jpg"
+  },
+  {
+   "videoId": "pE2p-OxTcdA",
+   "channel": "HACE",
+   "duration_seconds": 345,
+   "thumbnail": "https://i.ytimg.com/vi/pE2p-OxTcdA/mqdefault.jpg"
+  },
+  {
+   "videoId": "xUJgW23-3oM",
+   "channel": "Like Lofi",
+   "duration_seconds": 298,
+   "thumbnail": "https://i.ytimg.com/vi/xUJgW23-3oM/mqdefault.jpg"
+  },
+  {
+   "videoId": "hXh35CtnSyU",
+   "channel": "Sony Music India",
+   "duration_seconds": 193,
+   "thumbnail": "https://i.ytimg.com/vi/hXh35CtnSyU/mqdefault.jpg"
+  }
+ ],
+ "dooron dooron|paresh pahuja": [
+  {
+   "videoId": "LV_wiOhO40Q",
+   "channel": "Paresh Pahuja",
+   "duration_seconds": 247,
+   "thumbnail": "https://i.ytimg.com/vi/LV_wiOhO40Q/mqdefault.jpg"
+  },
+  {
+   "videoId": "y_GVDbfaiwQ",
+   "channel": "T-Series",
+   "duration_seconds": 347,
+   "thumbnail": "https://i.ytimg.com/vi/y_GVDbfaiwQ/mqdefault.jpg"
+  },
+  {
+   "videoId": "DA-Y5FkGUWs",
+   "channel": "TR Sound Project",
+   "duration_seconds": 220,
+   "thumbnail": "https://i.ytimg.com/vi/DA-Y5FkGUWs/mqdefault.jpg"
+  },
+  {
+   "videoId": "J1gkaSA5jb8",
+   "channel": "RytHM",
+   "duration_seconds": 240,
+   "thumbnail": "https://i.ytimg.com/vi/J1gkaSA5jb8/mqdefault.jpg"
+  }
+ ],
+ "husn|anuv jain": [
+  {
+   "videoId": "gJLVTKhTnog",
+   "channel": "Anuv Jain",
+   "duration_seconds": 240,
+   "thumbnail": "https://i.ytimg.com/vi/gJLVTKhTnog/mqdefault.jpg"
+  },
+  {
+   "videoId": "tzSXjwkFnVc",
+   "channel": "THE LYRICIST",
+   "duration_seconds": 240,
+   "thumbnail": "https://i.ytimg.com/vi/tzSXjwkFnVc/mqdefault.jpg"
+  },
+  {
+   "videoId": "OEl4Dzru9EE",
+   "channel": "Vibe Music",
+   "duration_seconds": 218,
+   "thumbnail": "https://i.ytimg.com/vi/OEl4Dzru9EE/mqdefault.jpg"
+  },
+  {
+   "videoId": "sJhDdmbrMWI",
+   "channel": "Polo Music Official ",
+   "duration_seconds": 218,
+   "thumbnail": "https://i.ytimg.com/vi/sJhDdmbrMWI/mqdefault.jpg"
+  }
+ ],
+ "why don't you stay|jeff satur": [
+  {
+   "videoId": "VzFzdjQWbKo",
+   "channel": "The Donut Lyrics",
+   "duration_seconds": 251,
+   "thumbnail": "https://i.ytimg.com/vi/VzFzdjQWbKo/mqdefault.jpg"
+  },
+  {
+   "videoId": "s-MZid-59Hc",
+   "channel": "Be On Cloud",
+   "duration_seconds": 271,
+   "thumbnail": "https://i.ytimg.com/vi/s-MZid-59Hc/mqdefault.jpg"
+  },
+  {
+   "videoId": "aVKJrJbHUV0",
+   "channel": "Jeff Satur - Topic",
+   "duration_seconds": 229,
+   "thumbnail": "https://i.ytimg.com/vi/aVKJrJbHUV0/mqdefault.jpg"
+  },
+  {
+   "videoId": "DVoYMC36YBk",
+   "channel": "CookieZ",
+   "duration_seconds": 252,
+   "thumbnail": "https://i.ytimg.com/vi/DVoYMC36YBk/mqdefault.jpg"
+  }
+ ],
+ "love is gone|slander": [
+  {
+   "videoId": "yctQRe--q6c",
+   "channel": "SLANDER",
+   "duration_seconds": 315,
+   "thumbnail": "https://i.ytimg.com/vi/yctQRe--q6c/mqdefault.jpg"
+  },
+  {
+   "videoId": "hCrtcVDgCGw",
+   "channel": "SLANDER",
+   "duration_seconds": 179,
+   "thumbnail": "https://i.ytimg.com/vi/hCrtcVDgCGw/mqdefault.jpg"
+  },
+  {
+   "videoId": "SQFLlWDWNLE",
+   "channel": "SLANDER - Topic",
+   "duration_seconds": 255,
+   "thumbnail": "https://i.ytimg.com/vi/SQFLlWDWNLE/mqdefault.jpg"
+  },
+  {
+   "videoId": "OxT228hZgm0",
+   "channel": "Kosong",
+   "duration_seconds": 174,
+   "thumbnail": "https://i.ytimg.com/vi/OxT228hZgm0/mqdefault.jpg"
+  }
+ ],
+ "dandelions|ruth b.": [
+  {
+   "videoId": "WgTMeICssXY",
+   "channel": "7clouds",
+   "duration_seconds": 229,
+   "thumbnail": "https://i.ytimg.com/vi/WgTMeICssXY/mqdefault.jpg"
+  },
+  {
+   "videoId": "maCs1b1BOdw",
+   "channel": "7clouds Acoustic",
+   "duration_seconds": 234,
+   "thumbnail": "https://i.ytimg.com/vi/maCs1b1BOdw/mqdefault.jpg"
+  },
+  {
+   "videoId": "zcCGID4gR38",
+   "channel": "Pun Phantom As",
+   "duration_seconds": 279,
+   "thumbnail": "https://i.ytimg.com/vi/zcCGID4gR38/mqdefault.jpg"
+  },
+  {
+   "videoId": "EpLpp3bwq_o",
+   "channel": "Dan Music",
+   "duration_seconds": 232,
+   "thumbnail": "https://i.ytimg.com/vi/EpLpp3bwq_o/mqdefault.jpg"
+  }
+ ],
+ "somewhere only we know|keane": [
+  {
+   "videoId": "-HwPKDlb3e8",
+   "channel": "Dan Music",
+   "duration_seconds": 234,
+   "thumbnail": "https://i.ytimg.com/vi/-HwPKDlb3e8/mqdefault.jpg"
+  },
+  {
+   "videoId": "xFGE8BuOn0g",
+   "channel": "Keane - Topic",
+   "duration_seconds": 236,
+   "thumbnail": "https://i.ytimg.com/vi/xFGE8BuOn0g/mqdefault.jpg"
+  },
+  {
+   "videoId": "3KHJKj9GgsI",
+   "channel": "Hélène",
+   "duration_seconds": 241,
+   "thumbnail": "https://i.ytimg.com/vi/3KHJKj9GgsI/mqdefault.jpg"
+  },
+  {
+   "videoId": "MlWUHY-GdBM",
+   "channel": "BBC Music",
+   "duration_seconds": 259,
+   "thumbnail": "https://i.ytimg.com/vi/MlWUHY-GdBM/mqdefault.jpg"
+  }
+ ],
+ "kasturi|amar prem ki prem kahani": [
+  {
+   "videoId": "ZVC5yg_YjcA",
+   "channel": "Times Music",
+   "duration_seconds": 240,
+   "thumbnail": "https://i.ytimg.com/vi/ZVC5yg_YjcA/mqdefault.jpg"
+  },
+  {
+   "videoId": "gPfIxI0b5Xs",
+   "channel": "Junglee Music",
+   "duration_seconds": 241,
+   "thumbnail": "https://i.ytimg.com/vi/gPfIxI0b5Xs/mqdefault.jpg"
+  },
+  {
+   "videoId": "9R3qF-j5gZ4",
+   "channel": "Times Music",
+   "duration_seconds": 241,
+   "thumbnail": "https://i.ytimg.com/vi/9R3qF-j5gZ4/mqdefault.jpg"
+  },
+  {
+   "videoId": "YbIGUcxjQng",
+   "channel": "Times Music",
+   "duration_seconds": 241,
+   "thumbnail": "https://i.ytimg.com/vi/YbIGUcxjQng/mqdefault.jpg"
+  }
+ ],
+ "chemtrails over the country club|lana del rey": [
+  {
+   "videoId": "gCw1f1GmPaU",
+   "channel": "Lana Del Rey - Topic",
+   "duration_seconds": 272,
+   "thumbnail": "https://i.ytimg.com/vi/gCw1f1GmPaU/mqdefault.jpg"
+  },
+  {
+   "videoId": "5okhEqd5t_w",
+   "channel": "Penguin Music",
+   "duration_seconds": 287,
+   "thumbnail": "https://i.ytimg.com/vi/5okhEqd5t_w/mqdefault.jpg"
+  },
+  {
+   "videoId": "EDvS-lPPBGs",
+   "channel": "David Dean Burkhart",
+   "duration_seconds": 271,
+   "thumbnail": "https://i.ytimg.com/vi/EDvS-lPPBGs/mqdefault.jpg"
+  },
+  {
+   "videoId": "p3baRRGhF3I",
+   "channel": "One Vibez",
+   "duration_seconds": 234,
+   "thumbnail": "https://i.ytimg.com/vi/p3baRRGhF3I/mqdefault.jpg"
+  }
+ ],
+ "blossom all the way (一路生花)|温奕心": [],
+ "duel in the mist|genshin impact": [
+  {
+   "videoId": "b8ygFdJwKxw",
+   "channel": "Hudson Blue",
+   "duration_seconds": 246,
+   "thumbnail": "https://i.ytimg.com/vi/b8ygFdJwKxw/mqdefault.jpg"
+  },
+  {
+   "videoId": "D48UG9WiTNk",
+   "channel": "HOYO-MiX",
+   "duration_seconds": 260,
+   "thumbnail": "https://i.ytimg.com/vi/D48UG9WiTNk/mqdefault.jpg"
+  },
+  {
+   "videoId": "i0Vbb251uTI",
+   "channel": "Reina",
+   "duration_seconds": 245,
+   "thumbnail": "https://i.ytimg.com/vi/i0Vbb251uTI/mqdefault.jpg"
+  },
+  {
+   "videoId": "tM44TuM4hcA",
+   "channel": "Streetwise Rhapsody - Topic",
+   "duration_seconds": 158,
+   "thumbnail": "https://i.ytimg.com/vi/tM44TuM4hcA/mqdefault.jpg"
+  }
+ ]
+}
