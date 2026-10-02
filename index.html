@@ -26,6 +26,14 @@
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#f4eefb">
 
+    <!-- Installable app (PWA): home-screen icon, full screen -->
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="AIMuse">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
     <!-- Main stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
@@ -1147,6 +1155,15 @@
 
     <!-- Loaded last: only reacts to the page, never changes how it works -->
     <script src="{{ url_for('static', filename='effects.js') }}"></script>
+
+    <!-- Makes AIMuse installable ("Add to Home screen" / "Install app") -->
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/sw.js").catch(() => {});
+            });
+        }
+    </script>
 
 </body>
 </html>

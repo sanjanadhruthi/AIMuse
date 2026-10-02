@@ -156,3 +156,21 @@ def test_analyze_endpoint_returns_care_flag():
 def test_analyze_endpoint_rejects_empty_text():
     response = app.app.test_client().post("/analyze", json={"text": "   "})
     assert response.status_code == 400
+
+
+# ------------------------------------------------ installable app (PWA)
+
+def test_service_worker_is_served_from_the_root():
+    response = app.app.test_client().get("/sw.js")
+    assert response.status_code == 200
+    assert "javascript" in response.headers["Content-Type"]
+    assert response.headers["Service-Worker-Allowed"] == "/"
+
+
+def test_manifest_describes_an_installable_app():
+    import json
+    response = app.app.test_client().get("/manifest.webmanifest")
+    data = json.loads(response.data)
+    assert response.status_code == 200
+    assert data["display"] == "standalone"
+    assert {icon["sizes"] for icon in data["icons"]} >= {"192x192", "512x512"}

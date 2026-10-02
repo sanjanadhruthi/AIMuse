@@ -2711,6 +2711,34 @@ ENTRY_TRACK_FILES = [
 ]
 
 
+# ---------------------------------------------------------
+# INSTALLABLE APP (PWA)
+# ---------------------------------------------------------
+# The service worker must be served from the site root to
+# control every page, so it gets its own route.  The manifest
+# lives in static/ and is linked from index.html.
+# ---------------------------------------------------------
+
+@app.route("/sw.js")
+def service_worker():
+
+    response = app.send_static_file("sw.js")
+    response.headers["Content-Type"] = "application/javascript; charset=utf-8"
+    response.headers["Cache-Control"] = "no-cache"
+    response.headers["Service-Worker-Allowed"] = "/"
+
+    return response
+
+
+@app.route("/manifest.webmanifest")
+def web_manifest():
+
+    response = app.send_static_file("manifest.webmanifest")
+    response.headers["Content-Type"] = "application/manifest+json"
+
+    return response
+
+
 @app.route("/health")
 def health():
     """

@@ -1,0 +1,17 @@
+{
+  "name": "AIMuse — Your Emotions, Your Music",
+  "short_name": "AIMuse",
+  "description": "Tell AIMuse how you feel and get a playlist for this moment.",
+  "id": "/",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4eefb",
+  "theme_color": "#f4eefb",
+  "icons": [
+    { "src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/static/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/static/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
