@@ -30,6 +30,26 @@
 }
 
 
+/* =========================================================
+   M0. NO SLIDING / STRETCHING
+   =========================================================
+   Before ENTER, the welcome screen should stay perfectly
+   still: the page behind it can't scroll, and the phone's
+   "stretch / bounce" at the edges is switched off everywhere.
+   ========================================================= */
+
+html,
+body {
+    overscroll-behavior: none;
+}
+
+body:not(.entered) {
+    overflow: hidden;
+
+    height: 100dvh;
+}
+
+
 @media (max-width: 600px) {
 
     /* =====================================================

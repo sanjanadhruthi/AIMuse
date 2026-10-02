@@ -722,7 +722,7 @@ function sizeDustCanvas() {
     // Enough to feel magical, never a blizzard: ~30 on a laptop
     // screen, ~14 on a phone.
     const wanted = Math.max(
-        14,
+        dust.width < 600 ? 22 : 14,
         Math.min(38, Math.round((dust.width * dust.height) / 58000))
     );
 
@@ -743,11 +743,12 @@ function newMote(anywhere) {
         heading: angle,
         speed: 6 + Math.random() * 12,               // pixels per second
         turn: 0.25 + Math.random() * 0.5,            // how windy its path is
-        size: 1.6 + Math.random() * 2.2,
+        // phones: a little bigger so the dust is actually visible
+        size: (1.6 + Math.random() * 2.2) * (dust.width < 600 ? 1.6 : 1),
         tint: Math.floor(Math.random() * 3),
         phase: Math.random() * Math.PI * 2,
         twinkle: 0.6 + Math.random() * 1.4,
-        sparkle: Math.random() < 0.32,               // some get a 4-point glint
+        sparkle: Math.random() < (dust.width < 600 ? 0.5 : 0.32),   // 4-point glint
         age: 0
     };
 
@@ -788,6 +789,13 @@ function updateDustRects() {
 
 function dustOpenness(x, y) {
 
+    /*
+        Phones: the cards fill almost the whole width, so dust that
+        strictly avoided every box was nearly never visible. There it
+        drifts over boxes too, just softer (never below 55%).
+    */
+    const floor = dust.width < 600 ? 0.55 : 0;
+
     let nearest = Infinity;
 
     for (let i = 0; i < dust.rects.length; i++) {
@@ -801,13 +809,13 @@ function dustOpenness(x, y) {
 
         if (distance < nearest) nearest = distance;
 
-        if (nearest === 0) return 0;
+        if (nearest === 0) return floor;
 
     }
 
     const t = Math.min(1, Math.max(0, (nearest - DUST_CLEARANCE) / DUST_FADE_BAND));
 
-    return t * t * (3 - 2 * t);      // smoothstep
+    return floor + (1 - floor) * t * t * (3 - 2 * t);      // smoothstep
 
 }
 

@@ -11,6 +11,7 @@
                                      pointer, cards lean toward it
      E4. Staggered float-ins      — songs / cards arrive one by one
      E5. Self-drawing timeline    — "How AIMuse hears you"
+     E7. Butterflies              — a few pastel butterflies drift by
 
    Off on touch screens, with "prefers-reduced-motion", and
    while the "Reduce effects" button is on (checked live).
@@ -462,6 +463,140 @@
 
 
     /* =====================================================
+       E7. BUTTERFLIES
+       =====================================================
+       A few pastel butterflies drift across the screen on
+       slow, wandering paths, flapping their wings. They sit
+       above the page but never block a tap (pointer-events:
+       none), avoid nothing, and stay few so they feel like a
+       surprise rather than decoration.
+       ===================================================== */
+
+    const BUTTERFLY_PALETTES = [
+        ["#f6b8d8", "#c9b2f2"],     // blush -> lavender
+        ["#b9d8f6", "#c7b6f4"],     // sky -> lavender
+        ["#f7c6e0", "#f3dcb6"],     // pink -> peach
+        ["#d6c4fa", "#a9cdf3"]      // lavender -> sky
+    ];
+
+    function butterflySVG(id, [a, b]) {
+
+        return `
+        <svg viewBox="-50 -50 100 100" aria-hidden="true">
+            <defs>
+                <linearGradient id="bf-${id}" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="${a}"/>
+                    <stop offset="1" stop-color="${b}"/>
+                </linearGradient>
+            </defs>
+            <g class="bf-wing bf-left">
+                <path d="M -2 -4 C -20 -38, -48 -30, -40 -6 C -36 4, -16 4, -2 0 Z"
+                      fill="url(#bf-${id})" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"/>
+                <path d="M -2 2 C -16 8, -34 18, -26 32 C -18 40, -6 22, -2 6 Z"
+                      fill="url(#bf-${id})" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"/>
+                <circle cx="-24" cy="-14" r="4" fill="rgba(255,255,255,0.75)"/>
+            </g>
+            <g class="bf-wing bf-right">
+                <path d="M 2 -4 C 20 -38, 48 -30, 40 -6 C 36 4, 16 4, 2 0 Z"
+                      fill="url(#bf-${id})" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"/>
+                <path d="M 2 2 C 16 8, 34 18, 26 32 C 18 40, 6 22, 2 6 Z"
+                      fill="url(#bf-${id})" stroke="rgba(255,255,255,0.85)" stroke-width="1.6"/>
+                <circle cx="24" cy="-14" r="4" fill="rgba(255,255,255,0.75)"/>
+            </g>
+            <ellipse cx="0" cy="2" rx="2.6" ry="15" fill="#8a76c4"/>
+            <path d="M -1 -12 Q -6 -24 -10 -27 M 1 -12 Q 6 -24 10 -27"
+                  stroke="#8a76c4" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        </svg>`;
+    }
+
+    function setupButterflies() {
+
+        if (REDUCED_MOTION) return;
+
+        const layer = document.createElement("div");
+        layer.className = "butterfly-layer";
+        layer.setAttribute("aria-hidden", "true");
+        document.body.appendChild(layer);
+
+        const small = window.innerWidth < 600;
+        const count = small ? 3 : 5;
+
+        const flock = [];
+
+        for (let i = 0; i < count; i++) {
+
+            const el = document.createElement("div");
+            el.className = "butterfly";
+            el.innerHTML = butterflySVG(i, BUTTERFLY_PALETTES[i % BUTTERFLY_PALETTES.length]);
+
+            const size = (small ? 36 : 44) + Math.random() * (small ? 12 : 18);
+            el.style.width = el.style.height = `${size}px`;
+            el.style.setProperty("--flap", `${0.32 + Math.random() * 0.22}s`);
+
+            layer.appendChild(el);
+
+            flock.push({
+                el,
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                heading: Math.random() * Math.PI * 2,
+                speed: 26 + Math.random() * 24,          // px per second
+                turn: 0.4 + Math.random() * 0.6,
+                phase: Math.random() * 10,
+                bob: 6 + Math.random() * 8
+            });
+        }
+
+        let last = performance.now();
+
+        function fly(now) {
+
+            const dt = Math.min(0.05, (now - last) / 1000);
+            last = now;
+
+            const hidden = effectsOff() || document.hidden;
+            layer.classList.toggle("is-off", hidden);
+
+            if (!hidden) {
+
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                const t = now / 1000;
+
+                for (const b of flock) {
+
+                    // gentle wandering, like the fairy dust but livelier
+                    b.heading += Math.sin(t * b.turn + b.phase) * dt * 1.4;
+
+                    b.x += Math.cos(b.heading) * b.speed * dt;
+                    b.y += Math.sin(b.heading) * b.speed * dt;
+
+                    // fluttery up-and-down bob
+                    const bob = Math.sin(t * 3 + b.phase) * b.bob;
+
+                    // wrap around the screen edges
+                    const m = 60;
+                    if (b.x < -m) b.x = w + m;
+                    if (b.x > w + m) b.x = -m;
+                    if (b.y < -m) b.y = h + m;
+                    if (b.y > h + m) b.y = -m;
+
+                    // face the way it flies (wings up = flying "up" on screen)
+                    const angle = b.heading * 180 / Math.PI + 90;
+
+                    b.el.style.transform =
+                        `translate3d(${b.x}px, ${b.y + bob}px, 0) rotate(${angle.toFixed(1)}deg)`;
+                }
+            }
+
+            requestAnimationFrame(fly);
+        }
+
+        requestAnimationFrame(fly);
+    }
+
+
+    /* =====================================================
        START
        ===================================================== */
 
@@ -473,6 +608,7 @@
         setupFloatIns();
         setupScrollReveals();
         setupTimeline();
+        setupButterflies();
 
     }
 
