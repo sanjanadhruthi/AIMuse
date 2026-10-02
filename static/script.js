@@ -469,9 +469,11 @@ function updateEntryStatus() {
 
     if (entryMusic.paused) {
 
+        // Browsers only allow sound after the first click/tap,
+        // and pressing ENTER is that click — so say it softly.
         musicStatus.textContent =
             entryWanted && !entryStarted
-                ? "Tap anywhere to start the music"
+                ? "Music begins when you enter"
                 : "Music paused";
 
         return;
@@ -480,7 +482,7 @@ function updateEntryStatus() {
 
     musicStatus.textContent =
         entryMusic.muted
-            ? "Tap anywhere for sound"
+            ? "Music begins when you enter"
             : "AIMuse is playing";
 
 }

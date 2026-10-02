@@ -36,7 +36,7 @@ CURATED_SAMPLES = {
     "happy": [
         ("Together With The Wind", "Toma超想吃番茄", ""),
         ("Sapphire", "Ed Sheeran", ""),
-        ("Permission to Dance", "BTS", ""),
+        ("My Universe", "Coldplay X BTS", ""),
         ("Love You Zindagi", "Dear Zindagi", "song"),
         ("Dreamers", "Jung Kook", ""),
     ],
@@ -51,7 +51,7 @@ CURATED_SAMPLES = {
 
     "calm": [
         ("Dandelions", "Ruth B.", ""),
-        ("Somewhere Only We Know", "Keane", ""),
+        ("Somewhere Only We Know", "rhianne", "cover"),
         ("Kasturi", "Amar Prem Ki Prem Kahani", "song"),
         ("Fade", "Jeff Satur", ""),
         ("Chemtrails Over The Country Club", "Lana Del Rey", ""),
@@ -85,8 +85,8 @@ CURATED_SAMPLES = {
         ("Blossom All the Way (一路生花)", "温奕心", "", "一路生花"),
         ("Duel in the Mist", "Genshin Impact", "Inazuma battle theme"),
         ("Kiliye (Instrumental)", "Dhibu Ninan Thomas", ""),
-        ("Warm Twilight", "Velvet Memories", ""),
-        ("Road to Success", "Lin Wanxing Theme", ""),
+        ("Warm Twilight", "Xie Nan", ""),
+        ("Road to Success (灿如繁星)", "林小玥", "林晚星进行曲", "灿如繁星"),
     ],
 
 }
