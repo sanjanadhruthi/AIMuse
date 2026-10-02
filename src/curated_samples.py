@@ -34,7 +34,7 @@ from src import youtube_recommender as yt
 CURATED_SAMPLES = {
 
     "happy": [
-        ("Together With The Wind", "Toma君想吃番茄", ""),
+        ("Together With The Wind", "Toma超想吃番茄", ""),
         ("Sapphire", "Ed Sheeran", ""),
         ("Permission to Dance", "BTS", ""),
         ("Love You Zindagi", "Dear Zindagi", "song"),
@@ -94,6 +94,12 @@ CURATED_SAMPLES = {
 
 UPLOADS_PER_SONG = 4
 
+# Songs pinned to an exact YouTube video (paste the id from the link:
+# youtube.com/watch?v=THIS_PART).  No search needed — about 1 unit.
+FIXED_VIDEOS = {
+    ("Together With The Wind", "Toma超想吃番茄"): "y_udJSHQzjE",
+}
+
 RETRIES = 3
 RETRY_WAIT_SECONDS = 3
 
@@ -143,6 +149,29 @@ def _entry(entry):
     title, artist, extra, *rest = entry
 
     return title, artist, extra, (rest[0] if rest else title)
+
+
+def _fixed_upload(video_id):
+    """The exact video chosen by hand (details cost ~1 unit)."""
+
+    try:
+        items = yt._fetch_details([video_id])
+    except yt._QuotaExceeded:
+        items = []
+    except Exception:
+        items = []
+
+    for item in items or []:
+        video = yt._make_video(item, "")
+        return [{
+            "videoId": video["videoId"],
+            "channel": video["channel"],
+            "duration_seconds": video["duration_seconds"],
+            "thumbnail": video["thumbnail"],
+        }]
+
+    # details unavailable right now — the id alone is enough to play it
+    return [{"videoId": video_id, "channel": "", "duration_seconds": 0, "thumbnail": ""}]
 
 
 def _find_uploads(title, artist, extra, match=None):
@@ -206,6 +235,15 @@ def warm(print_line=print):
 
             if saved.get(key):
                 print_line(f"{mood:10} {title[:34]:36} already saved")
+                continue
+
+            fixed = FIXED_VIDEOS.get((title, artist))
+
+            if fixed:
+                saved[key] = _fixed_upload(fixed)
+                with _LOCK:
+                    _save(saved)
+                print_line(f"{mood:10} {title[:34]:36} saved (your chosen video)")
                 continue
 
             uploads = None

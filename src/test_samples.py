@@ -172,3 +172,19 @@ def test_optional_match_title_is_used_for_matching(monkeypatch):
 
     assert seen["target"] == yt._norm("一路生花")
     assert cs.youtube_playlists()["neutral"][0]["title"] == "Blossom (一路生花)"
+
+
+
+def test_a_hand_picked_video_needs_no_search(monkeypatch):
+
+    monkeypatch.setattr(yt, "YOUTUBE_API_KEY", "test-key")
+    monkeypatch.setattr(cs, "CURATED_SAMPLES", {"happy": [("Song H", "Toma", "")]})
+    monkeypatch.setattr(cs, "FIXED_VIDEOS", {("Song H", "Toma"): "y_udJSHQzjE"})
+    monkeypatch.setattr(yt, "_alternatives_from_query",
+                        lambda *a: (_ for _ in ()).throw(AssertionError("searched")))
+    monkeypatch.setattr(yt, "_fetch_details", lambda ids: [])
+
+    cs.warm(print_line=lambda *_: None)
+
+    song = cs.youtube_playlists()["happy"][0]
+    assert song["videoId"] == "y_udJSHQzjE" and song["artist"] == "Toma"
