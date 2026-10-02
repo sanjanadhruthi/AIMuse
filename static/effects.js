@@ -608,7 +608,9 @@
         setupFloatIns();
         setupScrollReveals();
         setupTimeline();
-        setupButterflies();
+
+        // Butterflies are switched off (E7 is kept, unused, in case
+        // you want them back: just call setupButterflies() here).
 
     }
 
