@@ -98,6 +98,7 @@ UPLOADS_PER_SONG = 4
 # youtube.com/watch?v=THIS_PART).  No search needed — about 1 unit.
 FIXED_VIDEOS = {
     ("Together With The Wind", "Toma超想吃番茄"): "y_udJSHQzjE",
+    ("Road to Success (灿如繁星)", "林小玥"): "8Iaf2XuMnoU",
 }
 
 RETRIES = 3
@@ -181,7 +182,10 @@ def _find_uploads(title, artist, extra, match=None):
     trouble (try again later).  Raises yt._QuotaExceeded.
     """
 
-    query = " ".join(part for part in (artist, title, extra) if part)
+    # Search with the name the uploads actually use (the optional
+    # match title, e.g. the Chinese title) — an English display title
+    # in the query only confuses YouTube's search.
+    query = " ".join(part for part in (artist, match or title, extra) if part)
 
     found = yt._alternatives_from_query(
         query,

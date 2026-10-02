@@ -188,3 +188,24 @@ def test_a_hand_picked_video_needs_no_search(monkeypatch):
 
     song = cs.youtube_playlists()["happy"][0]
     assert song["videoId"] == "y_udJSHQzjE" and song["artist"] == "Toma"
+
+
+
+def test_search_uses_the_real_title_not_the_display_title(monkeypatch):
+
+    monkeypatch.setattr(yt, "YOUTUBE_API_KEY", "test-key")
+    monkeypatch.setattr(cs, "CURATED_SAMPLES",
+                        {"neutral": [("Road to Success (灿如繁星)", "林小玥", "", "灿如繁星")]})
+    monkeypatch.setattr(cs, "FIXED_VIDEOS", {})     # force a real search
+
+    seen = {}
+
+    def capture(query, *args):
+        seen["query"] = query
+        return _fake_found(["iiiiiiiiii1"])
+
+    monkeypatch.setattr(yt, "_alternatives_from_query", capture)
+
+    cs.warm(print_line=lambda *_: None)
+
+    assert seen["query"] == "林小玥 灿如繁星"
