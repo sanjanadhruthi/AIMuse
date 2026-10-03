@@ -25,3 +25,4 @@ data/*.tmp
 Thumbs.db
 .vscode/
 .idea/
+instance/

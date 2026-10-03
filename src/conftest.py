@@ -5,6 +5,10 @@ import sys
 
 import pytest
 
+# Tests use a throwaway in-memory database — never Neon, never your local file.
+os.environ["DATABASE_URL"] = "sqlite://"
+os.environ["SECRET_KEY"] = "test-secret"
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 if ROOT not in sys.path:

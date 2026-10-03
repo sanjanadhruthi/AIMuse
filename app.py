@@ -7,6 +7,7 @@ from flask import Flask, jsonify, request, render_template, url_for
 from src.preprocessing import preprocess_text
 from src.sample_names import sample_meta
 from src import curated_samples
+from src.auth import init_auth
 from src.youtube_recommender import (
     get_recommendations,
     find_replacement,
@@ -17,6 +18,8 @@ from src.youtube_recommender import (
 
 
 app = Flask(__name__, template_folder=".")
+
+init_auth(app)    # accounts + database (src/auth.py, src/db.py)
 
 
 # =========================================================
