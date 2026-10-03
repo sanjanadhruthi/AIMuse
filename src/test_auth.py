@@ -86,3 +86,11 @@ def test_no_database_url_means_local_sqlite(monkeypatch):
     from src.db import database_url
     monkeypatch.delenv("DATABASE_URL", raising=False)
     assert database_url().startswith("sqlite:///")
+
+
+# ------------------------------------------------ phones get fresh files
+
+def test_static_urls_carry_a_version_so_phones_refetch():
+    with aimuse.app.test_request_context():
+        url = aimuse.url_for("static", filename="style.css")
+    assert "?v=" in url

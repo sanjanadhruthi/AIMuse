@@ -22,6 +22,25 @@ app = Flask(__name__, template_folder=".")
 init_auth(app)    # accounts + database (src/auth.py, src/db.py)
 
 
+@app.url_defaults
+def static_file_version(endpoint, values):
+    """
+    Every url_for('static', ...) gets ?v=<file's last-change time>.
+    Phones keep old CSS/JS in their cache; a new version number
+    makes them download the changed file the moment it changes.
+    """
+
+    if endpoint != "static" or "filename" not in values:
+        return
+
+    path = os.path.join(app.static_folder, values["filename"])
+
+    try:
+        values["v"] = int(os.stat(path).st_mtime)
+    except OSError:
+        pass
+
+
 # =========================================================
 # AIMuse — EMOTIONAL UNDERSTANDING ENGINE
 # =========================================================

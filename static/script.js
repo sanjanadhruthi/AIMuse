@@ -1096,6 +1096,25 @@ function loadEntryAnimation(file) {
 loadEntryAnimation(currentEntryAnimation);
 const portalSkip = document.getElementById("portal-skip");
 
+/*
+    Until the site opens (welcome screen + entry animation), a finger
+    dragging anywhere must NOT move the page. CSS (mobile.css, M0)
+    already says so; this is the backup for phones that still pan
+    the screen. Taps are untouched, so ENTER and Skip still work.
+    { passive: false } is required, or the phone ignores
+    preventDefault() for touch moves.
+*/
+
+document.addEventListener("touchmove", (event) => {
+
+    if (document.body.classList.contains("entered")) return;
+
+    if (event.target.closest(".settings-dock")) return;
+
+    event.preventDefault();
+
+}, { passive: false });
+
 let hasEntered = false;
 
 let entryFinished = false;

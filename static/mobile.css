@@ -45,7 +45,8 @@ body {
 
 /* Locking only <body> is not enough on Android: the PAGE itself
    (the <html> element) could still be dragged up by ~24px and
-   snap back. So, until ENTER:
+   snap back. So, until the site opens (welcome screen AND the
+   entry animation):
      1. <html> AND <body> are locked to exactly the screen, and
      2. touch-action: none tells the phone "a finger dragging on
         the welcome screen is NOT a scroll" - taps still work,
@@ -58,7 +59,8 @@ body:not(.entered) {
     height: 100%;
 }
 
-body:not(.entered) .entry-screen {
+body:not(.entered) .entry-screen,
+body:not(.entered) .portal-transition {
     touch-action: none;
 }
 
