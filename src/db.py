@@ -38,10 +38,13 @@ def database_url():
     if not url:
         return "sqlite:///aimuse_local.db"
 
-    # Some hosts still hand out the old "postgres://" spelling,
-    # which SQLAlchemy no longer accepts.
-    if url.startswith("postgres://"):
-        url = "postgresql://" + url[len("postgres://"):]
+    # Name the driver explicitly. A bare "postgresql://" lets
+    # SQLAlchemy pick one, and SQLAlchemy 2.1 picks "psycopg" (v3),
+    # but requirements.txt installs psycopg2. "postgres://" is the
+    # old spelling some hosts still hand out.
+    for prefix in ("postgres://", "postgresql://"):
+        if url.startswith(prefix):
+            return "postgresql+psycopg2://" + url[len(prefix):]
 
     return url
 

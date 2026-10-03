@@ -68,3 +68,21 @@ def test_guests_can_still_use_aimuse(client):
     response = client.post("/analyze", json={"text": "aaj bahut khush hoon"})
     assert response.status_code == 200
     assert response.get_json()["emotion"] == "happy"
+
+
+# ------------------------------------------------ database address
+
+@pytest.mark.parametrize("given", [
+    "postgresql://u:p@host/db?sslmode=require",
+    "postgres://u:p@host/db?sslmode=require",
+])
+def test_postgres_urls_use_the_installed_driver(monkeypatch, given):
+    from src.db import database_url
+    monkeypatch.setenv("DATABASE_URL", given)
+    assert database_url() == "postgresql+psycopg2://u:p@host/db?sslmode=require"
+
+
+def test_no_database_url_means_local_sqlite(monkeypatch):
+    from src.db import database_url
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+    assert database_url().startswith("sqlite:///")
