@@ -70,6 +70,39 @@ def test_hinglish_and_everyday_sadness(text):
     assert mood(text)["emotion"] == "sad"
 
 
+@pytest.mark.parametrize("text", [
+    "i'm don't feel like i deserve happiness",
+    "I don't deserve happiness",
+    "i dont feel like i deserve to be happy",
+    "I don't think I can ever be happy again",
+])
+def test_not_deserving_happiness_is_sad(text):
+    # "don't" reaches across linking words to "happy"/"happiness"
+    assert mood(text)["emotion"] == "sad"
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("so much happiness today", "happy"),
+    ("feeling the loneliness again", "sad"),
+])
+def test_ness_words_are_understood(text, expected):
+    assert mood(text)["emotion"] == expected
+
+
+@pytest.mark.parametrize("text", [
+    "dont worry, I am finally happy",      # "dont" belongs to "worry"
+    "I can't believe I'm so happy",
+    "I don't know, I feel happy",
+    "never been this happy",               # = VERY happy
+])
+def test_negation_does_not_overreach(text):
+    assert mood(text)["emotion"] == "happy"
+
+
+def test_never_happy_is_still_sad():
+    assert mood("I've never been happy")["emotion"] == "sad"
+
+
 def test_phrase_without_negation_still_counts():
     assert mood("I'm feeling good today")["emotion"] == "happy"
 

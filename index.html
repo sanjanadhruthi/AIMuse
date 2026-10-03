@@ -43,8 +43,8 @@
     <!-- Phone layout (loaded last so it wins on small screens) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
 
-    <!-- Account popup (log in / sign up) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+    <!-- Account: login popup, login bubble, likes -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='account.css') }}">
 </head>
 
 <body>
@@ -1169,7 +1169,7 @@
 
     </div>
 
-    <!-- Login nudge: a small bubble pointing at the 👤 button (static/auth.js) -->
+    <!-- Login nudge: a small bubble pointing at the 👤 button (static/account.js) -->
     <div id="login-nudge" class="login-nudge" role="status" hidden>
         <button id="login-nudge-open" class="login-nudge-text" type="button">
             <strong>Log in or sign up</strong>
@@ -1179,7 +1179,7 @@
     </div>
 
     <!--
-        ACCOUNT POPUP — opened by the 👤 dock button (static/auth.js).
+        ACCOUNT POPUP — opened by the 👤 dock button (static/account.js).
         A native <dialog>: Esc closes it, and keyboard focus stays inside.
     -->
     <dialog id="auth-dialog" class="auth-dialog" aria-labelledby="auth-title">
@@ -1224,6 +1224,7 @@
 
             <div id="auth-account" hidden>
                 <div id="auth-account-name" class="auth-account-name"></div>
+                <div id="auth-liked" class="auth-liked"></div>
                 <button id="auth-logout" class="auth-logout" type="button">Log out</button>
             </div>
 
@@ -1235,8 +1236,8 @@
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 
-    <!-- Account popup: log in / sign up / log out -->
-    <script src="{{ url_for('static', filename='auth.js') }}"></script>
+    <!-- Account: login popup, login bubble, likes (static/account.js) -->
+    <script src="{{ url_for('static', filename='account.js') }}"></script>
 
     <!-- Loaded last: only reacts to the page, never changes how it works -->
     <script src="{{ url_for('static', filename='effects.js') }}"></script>
