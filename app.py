@@ -4,10 +4,9 @@ import re
 
 from flask import Flask, jsonify, request, render_template, url_for
 
-from src.preprocessing import preprocess_text
 from src.sample_names import sample_meta
 from src import curated_samples
-from src.auth import init_auth
+from src.accounts import init_auth
 from src.youtube_recommender import (
     get_recommendations,
     find_replacement,
@@ -17,9 +16,19 @@ from src.youtube_recommender import (
 )
 
 
+def preprocess_text(text):
+    """Lower-case, keep only letters and spaces, squash extra spaces.
+    (Was src/preprocessing.py — too small to be its own file.)"""
+
+    text = text.lower()
+    text = re.sub(r"[^a-zA-Z\s]", "", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
 app = Flask(__name__, template_folder=".")
 
-init_auth(app)    # accounts + database (src/auth.py, src/db.py)
+init_auth(app)    # accounts, database and likes (src/accounts.py)
 
 
 @app.url_defaults
@@ -1429,6 +1438,13 @@ def _word_forms(word):
     if word.endswith("ier") or word.endswith("iest"):
         forms.append(re.sub(r"ie(r|st)$", "y", word))
 
+    # happiness -> happy, loneliness -> lonely, happily -> happy
+    if word.endswith("iness") and len(word) > 6:
+        forms.append(word[:-5] + "y")
+
+    if word.endswith("ily") and len(word) > 5:
+        forms.append(word[:-3] + "y")
+
     for suffix in ("ing", "ed", "es", "s", "ly", "ness", "er", "est"):
 
         if word.endswith(suffix) and len(word) - len(suffix) >= 3:
@@ -1578,6 +1594,36 @@ NEGATION_BREAKERS = {"stop", "help", "but", "just", "only", "rather", "actually"
 # Hindi puts the negation AFTER the word: "khush nahi hoon".
 POST_NEGATION_WORDS = {"nahi", "nahin", "nhi", "mat"}
 
+# Words a negation can reach ACROSS: in "I don't feel like I deserve
+# happiness" the "don't" is 4 words before "happiness", past the
+# normal 3-word window, but everything in between just links them.
+NEGATION_BRIDGE_WORDS = {
+    "i", "im", "am", "me", "my", "feel", "feeling", "like", "deserve",
+    "deserving", "to", "be", "being", "get", "really", "even", "ever",
+    "truly", "that", "so", "very", "any", "much", "worthy", "worth", "of",
+    "the", "a", "an", "this", "think", "can", "could",
+}
+
+# NOT bridges on purpose: "can't BELIEVE I'm so happy" and "don't
+# KNOW, I feel happy" are happy sentences.
+
+
+def _never_means_more(words, position):
+    """
+    "never been this happy" / "never felt so loved" = MORE of the
+    feeling, not none of it.
+    """
+
+    if words[position] != "never":
+        return False
+
+    after = words[position + 1:position + 3]
+
+    return len(after) == 2 and after[0] in {"been", "felt", "was"} \
+        and after[1] in {"this", "so", "more"}
+
+NEGATION_BRIDGE_REACH = 7
+
 # "low energy", "no energy", "zero energy" deny energy even though
 # the word itself is a strong energetic signal.
 ENERGY_DENIERS = {
@@ -1645,12 +1691,27 @@ def is_negated_v2(words, index):
 
         if word in NEGATION_WORDS:
 
+            if _never_means_more(words, start + position):
+                return False
+
             after = window[position + 1:]
 
             if any(item in NEGATION_BREAKERS for item in after):
                 return False
 
             return True
+
+    # Longer reach, but only across linking words (see
+    # NEGATION_BRIDGE_WORDS): "dont feel like i deserve happiness".
+    for back in range(index - 1, max(-1, index - 1 - NEGATION_BRIDGE_REACH), -1):
+
+        word = words[back]
+
+        if word in NEGATION_WORDS:
+            return True
+
+        if word not in NEGATION_BRIDGE_WORDS:
+            break
 
     return False
 

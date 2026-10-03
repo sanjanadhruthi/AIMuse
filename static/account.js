@@ -1,18 +1,302 @@
 /* =========================================================
-   AIMuse — ACCOUNT POPUP (log in / sign up / log out)
+   AIMuse — ACCOUNT (login popup, login bubble, likes ❤️)
    =========================================================
-   The 👤 button in the settings dock opens a <dialog>.
+   Two parts, each wrapped in its own (() => { ... })() so their
+   variables never clash:
 
-     Logged out -> a form with two tabs: "Log in" / "Sign up"
-     Logged in  -> "Signed in as …" and a Log out button
+     PART 1 — LIKES: the ♡ on every song row
+     PART 2 — ACCOUNT POPUP + LOGIN BUBBLE (the 👤 button)
 
-   It talks to the Flask API in src/auth.py:
-     GET  /auth/me      who am I?
-     POST /auth/login   POST /auth/signup   POST /auth/logout
-
-   When the account changes, it fires an "aimuse:auth" event
-   on window, so likes / history (next phases) can react.
+   Talks to the Flask API in src/accounts.py.
    ========================================================= */
+
+
+/* ---------------------------------------------------------
+   PART 1 — LIKES
+   --------------------------------------------------------- */
+
+
+(() => {
+
+    const HEART =
+        '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">' +
+        '<path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.6 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/>' +
+        '</svg>';
+
+    const liked = new Map();      // videoId -> like
+    let signedIn = false;
+
+    const likedList = document.getElementById("auth-liked");
+
+
+    /* ---------------------------------------------- helpers */
+
+    function moodFor(item) {
+
+        // script.js keeps these as top-level variables
+        if (item.closest("#sample-song-list")) {
+            try { if (activeSampleMood) return activeSampleMood; } catch (error) { /* not defined */ }
+        }
+
+        try { if (latestEmotion) return latestEmotion; } catch (error) { /* not defined */ }
+
+        return "neutral";
+    }
+
+    function languageFor(song) {
+
+        if (song && song.language) return song.language;
+
+        try {
+            if (selectedLanguage && selectedLanguage !== "mix") return selectedLanguage;
+        } catch (error) { /* not defined */ }
+
+        return "";
+    }
+
+    function askToLogIn() {
+        window.dispatchEvent(new CustomEvent("aimuse:open-login", {
+            detail: { reason: "Log in to save the songs you love ❤️" }
+        }));
+    }
+
+
+    /* ---------------------------------------------- the heart on each row */
+
+    function sync(item, heart) {
+
+        const on = liked.has(item.dataset.videoId);
+        const title = (item._song && item._song.title) || "this song";
+
+        heart.classList.toggle("is-liked", on);
+        heart.setAttribute("aria-pressed", String(on));
+        heart.setAttribute("aria-label", on ? `Unlike ${title}` : `Like ${title}`);
+        heart.title = on ? "Unlike" : (signedIn ? "Like" : "Log in to like songs");
+
+    }
+
+    function decorate(item) {
+
+        if (!item.dataset.videoId) return;
+
+        let heart = item.querySelector(".like-button");
+
+        if (!heart) {
+
+            // A <span role="button">, because the row itself is already
+            // a <button> and buttons can't be nested inside buttons.
+            heart = document.createElement("span");
+            heart.className = "like-button";
+            heart.setAttribute("role", "button");
+            heart.tabIndex = 0;
+            heart.innerHTML = HEART;
+
+            heart.addEventListener("click", (event) => {
+                event.stopPropagation();     // don't also play the song
+                event.preventDefault();
+                toggle(item, heart);
+            });
+
+            heart.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    toggle(item, heart);
+                }
+            });
+
+            item.appendChild(heart);
+        }
+
+        sync(item, heart);
+
+    }
+
+    function refreshAll() {
+        document.querySelectorAll(".song-item[data-video-id]").forEach(decorate);
+    }
+
+
+    /* ---------------------------------------------- like / unlike */
+
+    async function toggle(item, heart) {
+
+        if (!signedIn) {
+            askToLogIn();
+            return;
+        }
+
+        const videoId = item.dataset.videoId;
+        const song = item._song || {};
+        const wasLiked = liked.has(videoId);
+
+        // Show it straight away; undo if the server says no.
+        const like = {
+            videoId,
+            title: song.title || "Untitled",
+            artist: song.artist || song.channel || "",
+            mood: moodFor(item),
+            language: languageFor(song)
+        };
+
+        if (wasLiked) liked.delete(videoId);
+        else liked.set(videoId, like);
+
+        heart.classList.remove("pop");
+        void heart.offsetWidth;               // restart the animation
+        if (!wasLiked) heart.classList.add("pop");
+
+        refreshAll();
+        renderLikedList();
+
+        try {
+
+            const response = wasLiked
+                ? await fetch(`/likes/${encodeURIComponent(videoId)}`, { method: "DELETE" })
+                : await fetch("/likes", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(like)
+                });
+
+            if (response.status === 401) {
+                signedIn = false;
+                throw new Error("logged out");
+            }
+
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        } catch (error) {
+
+            if (wasLiked) liked.set(videoId, like);
+            else liked.delete(videoId);
+
+            refreshAll();
+            renderLikedList();
+
+            if (!signedIn) askToLogIn();
+
+        }
+
+    }
+
+
+    /* ---------------------------------------------- list in the account popup */
+
+    function renderLikedList() {
+
+        if (!likedList) return;
+
+        likedList.textContent = "";
+
+        if (!signedIn) return;
+
+        const heading = document.createElement("p");
+        heading.className = "liked-heading";
+        heading.textContent = `❤️ Liked songs (${liked.size})`;
+        likedList.appendChild(heading);
+
+        if (!liked.size) {
+            const empty = document.createElement("p");
+            empty.className = "liked-empty";
+            empty.textContent = "Nothing yet — tap ♡ on any song you love.";
+            likedList.appendChild(empty);
+            return;
+        }
+
+        const list = document.createElement("ul");
+        list.className = "liked-list";
+
+        // song titles come from YouTube: textContent only, never HTML
+        [...liked.values()].slice(0, 30).forEach((song) => {
+
+            const li = document.createElement("li");
+            const link = document.createElement("a");
+
+            link.href = `https://www.youtube.com/watch?v=${encodeURIComponent(song.videoId)}`;
+            link.target = "_blank";
+            link.rel = "noopener";
+
+            const title = document.createElement("span");
+            title.className = "liked-title";
+            title.textContent = song.title;
+
+            const meta = document.createElement("span");
+            meta.className = "liked-meta";
+            meta.textContent = [song.artist, song.mood].filter(Boolean).join(" · ");
+
+            link.append(title, meta);
+            li.appendChild(link);
+            list.appendChild(li);
+
+        });
+
+        likedList.appendChild(list);
+
+    }
+
+
+    /* ---------------------------------------------- loading */
+
+    async function load() {
+
+        liked.clear();
+
+        if (signedIn) {
+            try {
+                const response = await fetch("/likes");
+                const data = await response.json();
+                if (response.ok) {
+                    // newest first from the server; keep that order
+                    data.likes.forEach((like) => liked.set(like.videoId, like));
+                }
+            } catch (error) {
+                /* offline: hearts just show as empty */
+            }
+        }
+
+        refreshAll();
+        renderLikedList();
+
+    }
+
+    window.addEventListener("aimuse:auth", (event) => {
+        signedIn = Boolean(event.detail && event.detail.username);
+        load();
+    });
+
+
+    /* ---------------------------------------------- new rows from script.js */
+
+    let queued = false;
+
+    new MutationObserver(() => {
+
+        if (queued) return;
+        queued = true;
+
+        requestAnimationFrame(() => {
+            queued = false;
+            refreshAll();
+        });
+
+    }).observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["data-video-id"]   // a failed song swapped for another upload
+    });
+
+    refreshAll();
+
+})();
+
+
+
+/* ---------------------------------------------------------
+   PART 2 — ACCOUNT POPUP + LOGIN BUBBLE
+   --------------------------------------------------------- */
+
 
 (() => {
 
@@ -415,6 +699,25 @@
         }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
 
     }
+
+
+    /* ---------------------------------------------- asked to log in
+       Part 1 (likes) asks for this when a guest taps ♡ on a song.
+    */
+
+    window.addEventListener("aimuse:open-login", (event) => {
+
+        hideNudge();
+
+        if (user) return;
+
+        setMode("login");
+        open();
+
+        const reason = event.detail && event.detail.reason;
+        if (reason) showMessage(reason, "info");
+
+    });
 
 
     /* ---------------------------------------------- on page load */
