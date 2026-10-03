@@ -525,3 +525,22 @@ body.reduce-effects .login-nudge {
     .dock-button.is-nudging { animation: none; }
     .login-nudge { transition: none; }
 }
+
+
+/* two-line text: bold title + a softer line under it */
+.login-nudge-text strong {
+    display: block;
+
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+
+.login-nudge-text span {
+    display: block;
+
+    margin-top: 1px;
+
+    color: var(--text-soft);
+
+    font-size: 0.78rem;
+}

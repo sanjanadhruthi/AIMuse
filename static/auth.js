@@ -259,21 +259,20 @@
 
 
     /* ---------------------------------------------- the login nudge
-       A small speech bubble pointing at the 👤 button:
-       "Log in to save the songs you love".
+       A small speech bubble under the 👤 button on the WELCOME
+       screen: "Log in or sign up — for a better experience".
 
        Polite on purpose — a nudge that nags makes people leave:
-         - guests only, and only AFTER they press ENTER
-         - at most once per visit, and at most 3 visits in total
-         - ✕ means "never again"
-         - it hides itself after 8 s, or as soon as you scroll
+         - guests only (never shown to someone logged in)
+         - once per visit, for about 3 seconds
+         - gone the moment you tap anything else (e.g. ENTER)
+         - ✕ means "never show this again"
     */
 
     const NUDGE_KEY = "aimuseLoginNudge";       // localStorage: {shown, off}
     const NUDGE_SESSION = "aimuseLoginNudgeSeen";
-    const NUDGE_MAX = 3;
-    const NUDGE_DELAY = 2500;
-    const NUDGE_STAYS = 8000;
+    const NUDGE_DELAY = 1200;     // let the welcome screen settle first
+    const NUDGE_STAYS = 3000;     // about 3 seconds on screen
 
     const nudge = document.getElementById("login-nudge");
     const nudgeOpen = document.getElementById("login-nudge-open");
@@ -331,6 +330,10 @@
 
     }
 
+    function hideOnOutsideTap(event) {
+        if (!nudge.contains(event.target)) hideNudge();
+    }
+
     function hideNudge() {
 
         clearTimeout(nudgeTimer);
@@ -341,6 +344,7 @@
         button.classList.remove("is-nudging");
 
         window.removeEventListener("scroll", hideNudge);
+        document.removeEventListener("pointerdown", hideOnOutsideTap, true);
         window.removeEventListener("resize", placeNudge);
 
         setTimeout(() => { nudge.hidden = true; }, 300);
@@ -350,11 +354,12 @@
     function maybeShowNudge() {
 
         if (!nudge || user || !meChecked) return;
-        if (!document.body.classList.contains("entered")) return;
+        // not while the entry animation plays (the dock is hidden then)
+        if (document.querySelector(".portal-transition.active")) return;
         if (seenThisVisit()) return;
 
         const state = readNudge();
-        if (state.off || state.shown >= NUDGE_MAX) return;
+        if (state.off) return;
 
         clearTimeout(nudgeTimer);
 
@@ -362,6 +367,7 @@
 
             // things may have changed while we waited
             if (user || dialog.open || seenThisVisit()) return;
+            if (document.querySelector(".portal-transition.active")) return;
 
             writeNudge({ ...state, shown: state.shown + 1 });
             try { sessionStorage.setItem(NUDGE_SESSION, "1"); } catch (error) { /* blocked */ }
@@ -375,6 +381,9 @@
             });
 
             window.addEventListener("scroll", hideNudge, { passive: true, once: true });
+
+            // any tap outside the bubble (ENTER, the page…) hides it
+            document.addEventListener("pointerdown", hideOnOutsideTap, true);
             window.addEventListener("resize", placeNudge);
 
             nudgeTimer = setTimeout(hideNudge, NUDGE_STAYS);
@@ -400,9 +409,10 @@
         button.addEventListener("click", hideNudge);
         window.addEventListener("aimuse:auth", hideNudge);
 
-        // Wait for ENTER: script.js adds "entered" to <body>.
-        new MutationObserver(maybeShowNudge)
-            .observe(document.body, { attributes: true, attributeFilter: ["class"] });
+        // Pressing ENTER (script.js adds "entered" to <body>) hides it.
+        new MutationObserver(() => {
+            if (document.body.classList.contains("entered")) hideNudge();
+        }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
 
     }
 
