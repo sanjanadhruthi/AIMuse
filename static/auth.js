@@ -258,12 +258,163 @@
     });
 
 
+    /* ---------------------------------------------- the login nudge
+       A small speech bubble pointing at the 👤 button:
+       "Log in to save the songs you love".
+
+       Polite on purpose — a nudge that nags makes people leave:
+         - guests only, and only AFTER they press ENTER
+         - at most once per visit, and at most 3 visits in total
+         - ✕ means "never again"
+         - it hides itself after 8 s, or as soon as you scroll
+    */
+
+    const NUDGE_KEY = "aimuseLoginNudge";       // localStorage: {shown, off}
+    const NUDGE_SESSION = "aimuseLoginNudgeSeen";
+    const NUDGE_MAX = 3;
+    const NUDGE_DELAY = 2500;
+    const NUDGE_STAYS = 8000;
+
+    const nudge = document.getElementById("login-nudge");
+    const nudgeOpen = document.getElementById("login-nudge-open");
+    const nudgeClose = document.getElementById("login-nudge-close");
+
+    let meChecked = false;
+    let nudgeTimer = null;
+
+    function readNudge() {
+        try {
+            return JSON.parse(localStorage.getItem(NUDGE_KEY)) || { shown: 0, off: false };
+        } catch (error) {
+            return { shown: 0, off: false };
+        }
+    }
+
+    function writeNudge(state) {
+        try { localStorage.setItem(NUDGE_KEY, JSON.stringify(state)); } catch (error) { /* blocked */ }
+    }
+
+    function seenThisVisit() {
+        try { return sessionStorage.getItem(NUDGE_SESSION) === "1"; } catch (error) { return false; }
+    }
+
+    // Sits right under the button on phones (dock at the top) and
+    // right above it on computers (dock at the bottom); the little
+    // arrow always points at the 👤 icon.
+    function placeNudge() {
+
+        if (!nudge || nudge.hidden) return;
+
+        const b = button.getBoundingClientRect();
+
+        // offsetWidth/Height = the real size. (getBoundingClientRect
+        // would include the 0.96 "pop-in" scale and come out too small.)
+        const n = { width: nudge.offsetWidth, height: nudge.offsetHeight };
+        const gap = 12;
+        const margin = 10;
+
+        const below = b.top + b.height / 2 < window.innerHeight / 2;
+
+        let left = b.left + b.width / 2 - n.width / 2;
+        // clientWidth = the width you can actually see (innerWidth can
+        // be a few px wider if anything on the page pokes out sideways)
+        const screenWidth = document.documentElement.clientWidth;
+
+        left = Math.max(margin, Math.min(left, screenWidth - n.width - margin));
+
+        const top = below ? b.bottom + gap : b.top - n.height - gap;
+
+        nudge.style.left = `${left}px`;
+        nudge.style.top = `${top}px`;
+        nudge.style.setProperty("--arrow-x", `${b.left + b.width / 2 - left}px`);
+        nudge.classList.toggle("is-below", below);
+
+    }
+
+    function hideNudge() {
+
+        clearTimeout(nudgeTimer);
+
+        if (!nudge || nudge.hidden) return;
+
+        nudge.classList.remove("is-visible");
+        button.classList.remove("is-nudging");
+
+        window.removeEventListener("scroll", hideNudge);
+        window.removeEventListener("resize", placeNudge);
+
+        setTimeout(() => { nudge.hidden = true; }, 300);
+
+    }
+
+    function maybeShowNudge() {
+
+        if (!nudge || user || !meChecked) return;
+        if (!document.body.classList.contains("entered")) return;
+        if (seenThisVisit()) return;
+
+        const state = readNudge();
+        if (state.off || state.shown >= NUDGE_MAX) return;
+
+        clearTimeout(nudgeTimer);
+
+        nudgeTimer = setTimeout(() => {
+
+            // things may have changed while we waited
+            if (user || dialog.open || seenThisVisit()) return;
+
+            writeNudge({ ...state, shown: state.shown + 1 });
+            try { sessionStorage.setItem(NUDGE_SESSION, "1"); } catch (error) { /* blocked */ }
+
+            nudge.hidden = false;
+            placeNudge();
+
+            requestAnimationFrame(() => {
+                nudge.classList.add("is-visible");
+                button.classList.add("is-nudging");
+            });
+
+            window.addEventListener("scroll", hideNudge, { passive: true, once: true });
+            window.addEventListener("resize", placeNudge);
+
+            nudgeTimer = setTimeout(hideNudge, NUDGE_STAYS);
+
+        }, NUDGE_DELAY);
+
+    }
+
+    if (nudge) {
+
+        nudgeOpen.addEventListener("click", () => {
+            hideNudge();
+            setMode("login");
+            open();
+        });
+
+        nudgeClose.addEventListener("click", () => {
+            hideNudge();
+            writeNudge({ ...readNudge(), off: true });
+        });
+
+        // Opening the popup yourself, or logging in, hides it too.
+        button.addEventListener("click", hideNudge);
+        window.addEventListener("aimuse:auth", hideNudge);
+
+        // Wait for ENTER: script.js adds "entered" to <body>.
+        new MutationObserver(maybeShowNudge)
+            .observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
+    }
+
+
     /* ---------------------------------------------- on page load */
 
     render();
 
     api("/auth/me").then(({ ok, data }) => {
         if (ok && data.logged_in) setUser(data.username);
+        meChecked = true;
+        maybeShowNudge();
     });
 
 })();
