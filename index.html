@@ -42,6 +42,9 @@
 
     <!-- Phone layout (loaded last so it wins on small screens) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
+
+    <!-- Account popup (log in / sign up) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
 </head>
 
 <body>
@@ -1126,6 +1129,21 @@
     <div id="settings-dock" class="settings-dock hint" role="group" aria-label="Display settings">
 
         <button
+            id="account-toggle"
+            class="dock-button"
+            type="button"
+            aria-haspopup="dialog"
+            aria-controls="auth-dialog"
+            aria-label="Log in or sign up"
+            title="Log in or sign up"
+        >
+            <span class="dock-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+            </span>
+            <span class="dock-label">Log in</span>
+        </button>
+
+        <button
             id="effects-toggle"
             class="dock-button"
             type="button"
@@ -1151,7 +1169,65 @@
 
     </div>
 
+    <!--
+        ACCOUNT POPUP — opened by the 👤 dock button (static/auth.js).
+        A native <dialog>: Esc closes it, and keyboard focus stays inside.
+    -->
+    <dialog id="auth-dialog" class="auth-dialog" aria-labelledby="auth-title">
+
+        <div class="auth-card">
+
+            <button id="auth-close" class="auth-close" type="button" aria-label="Close">×</button>
+
+            <h2 id="auth-title" class="auth-title">Welcome back</h2>
+            <p id="auth-subtitle" class="auth-subtitle">Log in so AIMuse remembers the songs you love.</p>
+
+            <form id="auth-form">
+
+                <div class="auth-tabs" role="tablist" aria-label="Log in or sign up">
+                    <button class="auth-tab is-active" type="button" role="tab" aria-selected="true" data-mode="login">Log in</button>
+                    <button class="auth-tab" type="button" role="tab" aria-selected="false" data-mode="signup">Sign up</button>
+                </div>
+
+                <label class="auth-field">
+                    <span>Username</span>
+                    <input id="auth-username" name="username" type="text"
+                           autocomplete="username" autocapitalize="none" spellcheck="false"
+                           required minlength="3" maxlength="30" pattern="[A-Za-z0-9_]{3,30}"
+                           title="3–30 letters, numbers or _">
+                    <small class="auth-hint">Letters, numbers and _ only</small>
+                </label>
+
+                <label class="auth-field">
+                    <span>Password</span>
+                    <input id="auth-password" name="password" type="password"
+                           autocomplete="current-password" required minlength="8" maxlength="128">
+                    <small class="auth-hint">At least 8 characters</small>
+                </label>
+
+                <label class="auth-check">
+                    <input id="auth-show-password" type="checkbox"> Show password
+                </label>
+
+                <button id="auth-submit" class="auth-submit" type="submit">Log in</button>
+
+            </form>
+
+            <div id="auth-account" hidden>
+                <div id="auth-account-name" class="auth-account-name"></div>
+                <button id="auth-logout" class="auth-logout" type="button">Log out</button>
+            </div>
+
+            <p id="auth-message" class="auth-message" role="status" aria-live="polite"></p>
+
+        </div>
+
+    </dialog>
+
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <!-- Account popup: log in / sign up / log out -->
+    <script src="{{ url_for('static', filename='auth.js') }}"></script>
 
     <!-- Loaded last: only reacts to the page, never changes how it works -->
     <script src="{{ url_for('static', filename='effects.js') }}"></script>

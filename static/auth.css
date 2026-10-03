@@ -1,0 +1,373 @@
+/* =========================================================
+   AIMuse — ACCOUNT POPUP
+   =========================================================
+   Uses the site's own colour variables (style.css), so light
+   and dark mode both work without extra rules.
+   ========================================================= */
+
+
+/* ---------- the 👤 dock button when signed in ---------- */
+
+.dock-button.is-signed-in {
+    border-color: var(--lavender);
+}
+
+.dock-button.is-signed-in .dock-icon {
+    position: relative;
+}
+
+/* a small glowing dot = "you're signed in" */
+.dock-button.is-signed-in .dock-icon::after {
+    content: "";
+
+    position: absolute;
+    right: -2px;
+    bottom: -1px;
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: var(--mint);
+
+    box-shadow: 0 0 0 2px var(--dock-bg), 0 0 8px var(--mint);
+}
+
+
+/* ---------- the popup ---------- */
+
+.auth-dialog {
+    width: min(400px, calc(100vw - 32px));
+    max-height: calc(100dvh - 32px);
+
+    margin: auto;
+    padding: 0;
+
+    overflow: auto;
+
+    color: var(--text-main);
+
+    border: 1px solid var(--border);
+    border-radius: 28px;
+
+    background: var(--surface-strong);
+
+    box-shadow: var(--shadow-hover);
+
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+
+    font-family: "DM Sans", sans-serif;
+}
+
+body.dark-theme .auth-dialog {
+    background: rgba(22, 16, 40, 0.92);
+}
+
+.auth-dialog::backdrop {
+    background: rgba(20, 14, 40, 0.42);
+
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.auth-dialog[open] {
+    animation: authIn 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes authIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+    }
+}
+
+.auth-card {
+    position: relative;
+
+    padding: 30px 26px 26px;
+}
+
+.auth-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+
+    display: grid;
+    place-items: center;
+
+    width: 34px;
+    height: 34px;
+
+    border: 0;
+    border-radius: 50%;
+
+    color: var(--text-soft);
+    background: transparent;
+
+    font-size: 1.3rem;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.auth-close:hover,
+.auth-close:focus-visible {
+    background: rgba(167, 148, 227, 0.16);
+}
+
+.auth-title {
+    margin: 0 36px 6px 0;
+
+    font-family: "Playfair Display", serif;
+    font-size: 1.7rem;
+    font-weight: 500;
+    line-height: 1.15;
+}
+
+.auth-subtitle {
+    margin: 0 0 22px;
+
+    color: var(--text-soft);
+
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+
+/* ---------- Log in / Sign up tabs ---------- */
+
+.auth-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    margin-bottom: 20px;
+    padding: 4px;
+
+    border-radius: 999px;
+
+    background: rgba(167, 148, 227, 0.14);
+}
+
+.auth-tab {
+    padding: 9px 0;
+
+    border: 0;
+    border-radius: 999px;
+
+    color: var(--text-soft);
+    background: transparent;
+
+    font: inherit;
+    font-size: 0.86rem;
+
+    cursor: pointer;
+
+    transition: background 250ms ease, color 250ms ease;
+}
+
+.auth-tab.is-active {
+    color: var(--chip-active-text, var(--text-main));
+    background: var(--chip-active-bg, var(--lavender-soft));
+
+    box-shadow: 0 4px 14px rgba(140, 108, 208, 0.18);
+}
+
+
+/* ---------- fields ---------- */
+
+.auth-field {
+    display: block;
+
+    margin-bottom: 14px;
+}
+
+.auth-field span {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: var(--text-soft);
+
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.auth-field input {
+    box-sizing: border-box;
+
+    width: 100%;
+
+    padding: 12px 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    color: var(--text-main);
+    background: rgba(var(--glass), calc(0.55 * var(--glass-k, 1)));
+
+    /* 16px+ stops iPhones from zooming in when you tap the box */
+    font: inherit;
+    font-size: 1rem;
+
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+body.dark-theme .auth-field input {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.auth-field input:focus {
+    outline: none;
+
+    border-color: var(--lavender);
+
+    box-shadow: 0 0 0 3px rgba(167, 148, 227, 0.25);
+}
+
+.auth-hint {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--text-faint);
+
+    font-size: 0.74rem;
+}
+
+.auth-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin: 2px 0 18px;
+
+    color: var(--text-soft);
+
+    font-size: 0.84rem;
+
+    cursor: pointer;
+}
+
+.auth-check input {
+    accent-color: var(--lavender);
+}
+
+
+/* ---------- buttons ---------- */
+
+.auth-submit,
+.auth-logout {
+    width: 100%;
+
+    padding: 13px;
+
+    border: 0;
+    border-radius: 999px;
+
+    color: #fff;
+    background: linear-gradient(120deg, var(--pink), var(--lavender) 55%, var(--blue));
+
+    box-shadow: 0 10px 26px rgba(140, 108, 208, 0.30);
+
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+
+    cursor: pointer;
+
+    transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.auth-submit:hover:not(:disabled),
+.auth-logout:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.auth-submit:disabled,
+.auth-logout:disabled {
+    opacity: 0.6;
+
+    cursor: wait;
+}
+
+.auth-logout {
+    color: var(--text-main);
+    background: transparent;
+
+    border: 1px solid var(--border);
+
+    box-shadow: none;
+}
+
+
+/* ---------- messages ---------- */
+
+.auth-message {
+    min-height: 1.3em;
+
+    margin: 12px 0 0;
+
+    font-size: 0.86rem;
+    line-height: 1.45;
+    text-align: center;
+}
+
+.auth-message[data-kind="error"] {
+    color: #c2416b;
+}
+
+body.dark-theme .auth-message[data-kind="error"] {
+    color: #ff9cbc;
+}
+
+.auth-message[data-kind="success"] {
+    color: #2f8f76;
+}
+
+body.dark-theme .auth-message[data-kind="success"] {
+    color: var(--mint);
+}
+
+.auth-message[data-kind="info"] {
+    color: var(--text-soft);
+}
+
+
+/* ---------- signed-in view ---------- */
+
+.auth-account-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 18px;
+    padding: 14px 16px;
+
+    border-radius: 18px;
+
+    background: rgba(167, 148, 227, 0.12);
+
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.auth-account-name::before {
+    content: "🌙";
+}
+
+
+/* ---------- calm mode ---------- */
+
+body.reduce-effects .auth-dialog[open] {
+    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-dialog[open] {
+        animation: none;
+    }
+}

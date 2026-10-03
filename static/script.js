@@ -1109,7 +1109,7 @@ document.addEventListener("touchmove", (event) => {
 
     if (document.body.classList.contains("entered")) return;
 
-    if (event.target.closest(".settings-dock")) return;
+    if (event.target.closest(".settings-dock, .auth-dialog")) return;
 
     event.preventDefault();
 

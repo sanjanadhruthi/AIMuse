@@ -94,3 +94,12 @@ def test_static_urls_carry_a_version_so_phones_refetch():
     with aimuse.app.test_request_context():
         url = aimuse.url_for("static", filename="style.css")
     assert "?v=" in url
+
+
+# ------------------------------------------------ the popup is on the page
+
+def test_home_page_has_the_account_button_and_popup(client):
+    html = client.get("/").get_data(as_text=True)
+    assert 'id="account-toggle"' in html
+    assert 'id="auth-dialog"' in html
+    assert "auth.js?v=" in html
